@@ -1,32 +1,78 @@
 <html>
-    <head>
-        <title>AILab-FOI AR</title>
-        <link rel=stylesheet href="/ex/index/start.css"/>
-        <body>
-            
-                <section>
-                  <h1>Ctrl + Escape: Back to the Start</h1>
-                  <p>Umjetna inteligencija (AI) koja upravlja sigurnosnim sustavom odlučila je preuzeti kontrolu i zatvoriti sve prisutne unutar jedne sobe. Grupa stručnjaka - detektiv, inženjer i haker - mora surađivati kako bi deaktivirali AI i oslobodili se iz sobe prije nego što AI preuzme potpunu kontrolu nad kompleksom.</p>
-                  <h2>Pravila igre</h2>
-                  <p>Svaki igrač odabire jednu od tri klase igrača prije početka igre - Detektiva, Inženjera ili Hakera. Skeniranje AR markera se odvija tako da Igrači koriste svoje mobilne uređaje za skeniranje AR markera koji se nalaze u prostorijama FOI kompleksa. Svaki marker pruža jedinstvene tragove i zagonetke koji odgovaraju određenoj klasi igrača. Zagonetke i tragovi se rješavaju tako da Igrači koriste svoje jedinstvene vještine i znanja kako bi riješili zagonetke i pronalazili ključne tragove. 
-                </p>
-                <h2>Klase</h2>
-                <table>
-                    <tr>
-                        <th>Haker</th>
-                        <th>Inženjer</th>
-                        <th>Detektiv</th>
-                    </tr>
-                    <tr>
-<td>specijaliziran za hakiranje i manipulaciju sustava. Haker rješava informatičke probleme, dekodira šifrirane poruke i prepoznaje informatičke obrasce.</td>
-<td>koristi svoje tehničko znanje kako bi razumio sustav AI i pronašao ranjivosti te zato on rješava mehatroničke zagonetke i matematičke zadatke kako bi dobio ključne tragove. Jedan od primjera zagonetki koje bi inženjer rješavao su spajanje puzzli i rješavanje matematičkih jednadžbi.</td>
-<td> zadužen za traženje i spajanje tragova te interpretaciju znakova te koristi svoju sposobnost zapažanja i analize kako bi otkrio smjer daljnjeg istraživanja. On će na temelju oblika i boja zaključiti koji će biti sljedeći potez, odnosno koji trag navodi igrače na daljnje traženje. Detektiv bi, također, u stvarnom svijetu trebao imati bilježnicu za zapisivanje pojedinih oblika, boja ili pisanih tragova koji će se pojavljivati samo jednom, a koje će mu inženjer i haker „donijeti“. 
-</td>                    
-</tr>
-                </table>
-                
-                <button><a href="index.html">Pokreni igru</a></button>
-                </section>
+<head>
+<title>AILab-FOI AR</title>
+<script src="ex/js/aframe.min.js"></script>
+<script src="ex/js/aframe-ar.js"></script>
+<style>
+  .arjs-loader {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-        </body>
+  }
+  
+  .arjs-loader div {
+    text-align: center;
+    font-size: 1.25em;
+    color: white;
+  }
+</style>
+</head>
+<body style="margin : 0px; overflow: hidden;">
+  <a-scene
+    vr-mode-ui="enabled: false;"
+    renderer="logarithmicDepthBuffer: true;"
+    embedded
+    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
+  >
+    <a-marker type="pattern" url="augmented-artisan.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
+        <a-entity
+        gltf-model="augmented-artisan.glb"
+        scale="1 1 1"
+        position="0 -1 0"
+        material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
+    <a-marker type="pattern" url="futuristic-foreseer.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
+        <a-entity
+        gltf-model="futuristic-foreseer.glb"
+        scale="1 1 1"
+        position="0 -1 0"
+        material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
+    
+    <a-marker type="pattern" url="spectral-headmaster.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
+        <a-entity
+        gltf-model="spectral-headmaster.glb"
+        scale="1 1 1"
+        position="0 -1 0"
+        material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
+    
+    <a-marker type="pattern" url="virtual-visionary.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
+        <a-entity
+        gltf-model="virtual-visionary.glb"
+        scale="1 1 1"
+        position="0 -1 0"
+        material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
+    
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+
 </html>
