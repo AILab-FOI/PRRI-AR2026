@@ -7,3 +7,12 @@ An augmented reality escape game developed by students and the [Artificial Intel
 To generate patterns you can use [this online tool](https://jeromeetienne.github.io/AR.js/three.js/examples/marker-training/examples/generator.html). To generate markers you can use [this online tool](https://carnaux.github.io/NFT-Marker-Creator/). To generate your own SSH keys, use the `generate-keys.sh` script.
 
 WhatsApp group link: https://chat.whatsapp.com/EiNdeOCFXmmK1bmwomJlKs
+
+##SSH upute
+ssh ar@games.foi.hr
+pass: *******
+
+##Paljenje servera
+
+nohup runzeo -a 0.0.0.0:5334 -f None & 
+nohup python3.6 server.py &
