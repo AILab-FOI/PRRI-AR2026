@@ -1,0 +1,16 @@
+{
+    "quests": [
+        {
+            "id": "quest1",
+            "start_marker": "marker1",
+            "end_marker": "marker2",
+            "isCompleted": false
+        },
+        {
+            "id": "quest2",
+            "start_marker": "marker3",
+            "end_marker": "marker4",
+            "isCompleted": false
+        }
+    ]
+}
