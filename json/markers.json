@@ -1,0 +1,9 @@
+{
+    "markers": [
+        {
+            "id": "marker1",
+            "player": "player1",
+            "isCompleted": false
+        }
+    ]
+}
