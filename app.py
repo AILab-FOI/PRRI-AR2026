@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, render_template
 from ZODB import DB
 from persistent import Persistent
 from persistent.list import PersistentList
@@ -9,7 +9,7 @@ import json
 import time
 
 app = Flask(__name__)
-
+app.config['STATIC_URL_PATH'] = '/static'
 # ZEO server address
 zeo_server_address = ('31.147.206.149', 5334)
 
@@ -22,10 +22,14 @@ quests_json_path = "json/quests.json"
 def serve_html():
     return send_from_directory('.', 'index.html')
 
+@app.route('/startPage.html')
+def serve_start_page(): 
+    return send_from_directory('static', 'startPage.html')   
+
 # Ruta za posluživanje CSS datoteka
 @app.route('/<path:filename>.css')
-def serve_css(filename):
-    return send_from_directory('.', filename + '.css')
+def serve_css():
+    return send_from_directory('index', 'start.css')
 
 # Ruta za posluživanje JavaScript datoteka
 @app.route('/<path:filename>.js')
@@ -45,9 +49,6 @@ def serve_jpg(filename):
 @app.route('/<path:filename>.json')
 def serve_json(filename):
     return send_from_directory('.', filename + '.json')
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 class Player(Persistent):
@@ -187,8 +188,6 @@ def start_timer():
         connection.close()
         return jsonify({'message': 'No game session found'}), 404
 
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 # Function to retrieve game state
