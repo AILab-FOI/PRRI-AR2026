@@ -8,11 +8,11 @@ To generate patterns you can use [this online tool](https://jeromeetienne.github
 
 WhatsApp group link: https://chat.whatsapp.com/EiNdeOCFXmmK1bmwomJlKs
 
-##SSH upute
+## SSH upute
 ssh ar@games.foi.hr
 pass: *******
 
-##Paljenje servera
+## Paljenje servera
 
 nohup runzeo -a 0.0.0.0:5334 -f None & 
 nohup python3.6 server.py &
