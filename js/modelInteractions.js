@@ -4,14 +4,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const radioMarker=document.querySelector('a-marker[type="pattern"][url="Patterns/Radio_pattern.patt"]');
 
     headphonesMarker.addEventListener('markerFound', function() {
-      console.log('Headphones marker found!');
       window.confirm("Code: .-. .- -.. .. .--- .- - --- .-. ");
-
+      
+      fetch('31.147.206.149:5333/scan', {
+        method: 'POST',
+        body: JSON.stringify({ marker_id: 'headphones' }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Handle the response from the backend
+          console.log(data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      
     });
   
     headphonesMarker.addEventListener('markerLost', function() {
-      console.log('Headphones marker lost!');
-      // Here you can implement the action you want to perform when the headphones marker is lost
     });
 
     radioMarker.addEventListener('markerFound', function() {
@@ -20,3 +33,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     });
   });
+
+  //kada se marker skenira šalje se potvrda skena na beckend
+  //updejta se json na beckendu
+  //kada su oba skenirana, prikazuje se poruka na ekranu korisnika da je zadatak završen
+  //flag = true

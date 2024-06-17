@@ -2,8 +2,8 @@
     "quests": [
         {
             "id": "quest1",
-            "start_marker": "marker1",
-            "end_marker": "marker2",
+            "start_marker": "headphones",
+            "end_marker": "radio",
             "isCompleted": false
         },
         {

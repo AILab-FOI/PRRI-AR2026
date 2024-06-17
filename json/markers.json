@@ -1,7 +1,7 @@
 {
     "markers": [
         {
-            "id": "marker1",
+            "id": "headphones",
             "player": "player1",
             "isScanned": false
         },
