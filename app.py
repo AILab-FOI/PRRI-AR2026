@@ -48,6 +48,10 @@ def serve_js(filename):
 def serve_ex_js(filename):
     return send_from_directory('ex/js', filename)
 
+@app.route('/ex/images/<path:filename>')
+def serve_ex_images(filename):
+    return send_from_directory('ex/images', filename)
+
 # Ruta za posluživanje slika
 @app.route('/images/<path:filename>')
 def serve_png(filename):
