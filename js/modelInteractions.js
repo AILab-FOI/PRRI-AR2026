@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     Swal.fire({
       position: 'top-start',
       icon: 'question',
-      title: 'Puzzle 3',
-      text: "A + B + C = ?",
+      title: 'Puzzle 2-1',
+      text: "A + B + C + D = ?",
       showCancelButton: true,
       confirmButtonColor: '#4CAF50',
       cancelButtonColor: '#4CAF50',
@@ -161,8 +161,3 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
 
 });
-
-//kada se marker skenira šalje se potvrda skena na beckend
-//updejta se json na beckendu
-//kada su oba skenirana, prikazuje se poruka na ekranu korisnika da je zadatak završen
-//flag = true
