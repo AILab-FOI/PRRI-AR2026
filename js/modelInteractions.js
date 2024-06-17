@@ -3,6 +3,8 @@ let markerStatus = {
   "radioMarker": false,
   "kalkulatorMarker": false,
   "laptopMarker": false,
+  "consoleMarker": false,
+  "disketaMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -10,6 +12,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const radioMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Radio_pattern.patt"]');
   const kalkulatorMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Calculator_pattern.patt"]');
   const laptopMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Laptop_pattern.patt"]');
+  const consoleMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Hand_scanner_pattern.patt"]');
+  const disketaMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Game_cartridge_pattern.patt"]');
+
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
 
@@ -157,6 +162,78 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     })
   
+  });
+
+  consoleMarker.addEventListener('markerFound', function () {
+    if (markerStatus["consoleMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      icon: 'question',
+      title: 'Puzzle 3-1',
+      text: "U igraćoj konzoli je zaglavljena disketa, koja je šifra da ona izađe vanka?",
+      showCancelButton: true,
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok',
+      cancelButtonText: 'Do not show again'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/scan', {
+          method: 'POST',
+          body: JSON.stringify({ marker_id: "terminal", player: 'player1' }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response from the backend
+            console.log(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+      else if (result.isDismissed) {
+        markerStatus["consoleMarker"] = true;
+      }
+    })
+  });
+
+  disketaMarker.addEventListener('markerFound', function () {
+    if (markerStatus["disketaMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      icon: 'question',
+      title: 'Puzzle 3-2',
+      text: "Slika govori više od tisuću riječi...",
+      showCancelButton: true,
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok',
+      cancelButtonText: 'Do not show again'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/scan', {
+          method: 'POST',
+          body: JSON.stringify({ marker_id: "disketa", player: 'player1' }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response from the backend
+            console.log(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+      else if (result.isDismissed) {
+        markerStatus["disketaMarker"] = true;
+      }
+    })
   });
     
 
