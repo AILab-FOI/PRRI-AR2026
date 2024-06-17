@@ -16,3 +16,7 @@ pass: *******
 
 nohup runzeo -a 0.0.0.0:5334 -f None & 
 nohup python3.6 server.py &
+
+## Itch.io
+
+Read more about our videogame on this link: https://ailab-foi.itch.io/prri-ar2024. 
