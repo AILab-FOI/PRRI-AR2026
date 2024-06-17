@@ -27,29 +27,40 @@ def serve_start_page():
     return send_from_directory('static', 'startPage.html')   
 
 # Ruta za posluživanje CSS datoteka
-@app.route('/<path:filename>.css')
+@app.route('/static/start.css')
 def serve_css():
-    return send_from_directory('index', 'start.css')
+    return send_from_directory('static', 'start.css')
 
 # Ruta za posluživanje JavaScript datoteka
-@app.route('/<path:filename>.js')
+@app.route('/js/<path:filename>')
 def serve_js(filename):
-    return send_from_directory('.', filename + '.js')
+    return send_from_directory('js', filename)
+
+@app.route('/ex/js/<path:filename>')
+def serve_ex_js(filename):
+    return send_from_directory('ex/js', filename)
 
 # Ruta za posluživanje slika
-@app.route('/<path:filename>.png')
+@app.route('/images/<path:filename>')
 def serve_png(filename):
-    return send_from_directory('.', filename + '.png')
+    return send_from_directory('images', filename)
 
 @app.route('/<path:filename>.jpg')
 def serve_jpg(filename):
     return send_from_directory('.', filename + '.jpg')
 
-# Ruta za posluživanje JSON datoteka
-@app.route('/<path:filename>.json')
-def serve_json(filename):
-    return send_from_directory('.', filename + '.json')
 
+@app.route('/Markers/<path:filename>')
+def serve_markers(filename):
+    return send_from_directory('Markers', filename)
+
+@app.route('/Models/<path:filename>')
+def serve_folders(filename):
+    return send_from_directory('Models', filename)
+
+@app.route('/Patterns/<path:filename>')
+def serve_patterns(filename):
+    return send_from_directory('Patterns', filename)
 
 class Player(Persistent):
     def __init__(self, id, name, role, game_session=None):
