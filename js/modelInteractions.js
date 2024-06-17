@@ -6,7 +6,8 @@ let markerStatus = {
   "consoleMarker": false,
   "disketaMarker": false,
   "phoneMarker": false,
-  "wallScreenMarker": false
+  "wallScreenMarker": false,
+  "keypadMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const disketaMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Game_cartridge_pattern.patt"]');
   const phoneMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Phone_pattern.patt"]');
   const wallScreenMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Wall_screen_pattern.patt"]');
+  const keypadMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Keypad_pattern.patt"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -308,6 +310,42 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
       else if (result.isDismissed) {
         markerStatus["wallScreenMarker"] = true;
+      }
+    })
+  });
+
+  keypadMarker.addEventListener('markerFound', function () {
+    if (markerStatus["keypadMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      icon: 'question',
+      title: 'Final puzzle',
+      text: "Kombinacijom svih prethodnih šifri na kraju zagonetki, otključaj vrata!",
+      showCancelButton: true,
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok',
+      cancelButtonText: 'Do not show again'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/scan', {
+          method: 'POST',
+          body: JSON.stringify({ marker_id: "wallScreen", player: 'player1' }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response from the backend
+            console.log(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+      else if (result.isDismissed) {
+        markerStatus["keypadMarker"] = true;
       }
     })
   });
