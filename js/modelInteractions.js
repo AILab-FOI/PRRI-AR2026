@@ -1,13 +1,15 @@
 let markerStatus = {
   "headphonesMarker": false,
   "radioMarker": false,
-  "kalkulatorMarker": false
+  "kalkulatorMarker": false,
+  "laptopMarker": false,
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
   const headphonesMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Headphones_pattern.patt"]');
   const radioMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Radio_pattern.patt"]');
   const kalkulatorMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Calculator_pattern.patt"]');
+  const laptopMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Laptop_pattern.patt"]');
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
 
@@ -119,6 +121,45 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
   }
   );
+
+  laptopMarker.addEventListener('markerFound', function () { 
+    if (markerStatus["laptopMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      icon: 'question',
+      title: 'Puzzle 2-2',
+      text: "Pronalaziš laptop, šta ćeš uraditi?",
+      showCancelButton: true,
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok',
+      cancelButtonText: 'Do not show again'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/scan', {
+          method: 'POST',
+          body: JSON.stringify({ marker_id: "laptop", player: 'player1' }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response from the backend
+            console.log(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+      else if (result.isDismissed) {
+        markerStatus["laptopMarker"] = true;
+      }
+    })
+  
+  });
+    
+
 });
 
 //kada se marker skenira šalje se potvrda skena na beckend
