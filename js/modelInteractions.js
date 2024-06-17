@@ -4,7 +4,9 @@ let markerStatus = {
   "kalkulatorMarker": false,
   "laptopMarker": false,
   "consoleMarker": false,
-  "disketaMarker": false
+  "disketaMarker": false,
+  "phoneMarker": false,
+  "wallScreenMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -14,6 +16,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const laptopMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Laptop_pattern.patt"]');
   const consoleMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Hand_scanner_pattern.patt"]');
   const disketaMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Game_cartridge_pattern.patt"]');
+  const phoneMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Phone_pattern.patt"]');
+  const wallScreenMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Wall_screen_pattern.patt"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -235,6 +239,76 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     })
   });
-    
+  
+  phoneMarker.addEventListener('markerFound', function () {
+    if (markerStatus["phoneMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      icon: 'question',
+      title: 'Puzzle 6-1',
+      text: "444 9999 2 7 555 666 222 33",
+      showCancelButton: true,
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok',
+      cancelButtonText: 'Do not show again'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/scan', {
+          method: 'POST',
+          body: JSON.stringify({ marker_id: "phone", player: 'player1' }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response from the backend
+            console.log(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+      else if (result.isDismissed) {
+        markerStatus["phoneMarker"] = true;
+      }
+    })
+  });
 
+  wallScreenMarker.addEventListener('markerFound', function () {
+    if (markerStatus["wallScreenMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      icon: 'question',
+      title: 'Puzzle 6-2',
+      text: "Riješi zagonetku na zidnom ekranu!",
+      showCancelButton: true,
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok',
+      cancelButtonText: 'Do not show again'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/scan', {
+          method: 'POST',
+          body: JSON.stringify({ marker_id: "wallScreen", player: 'player1' }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response from the backend
+            console.log(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+      else if (result.isDismissed) {
+        markerStatus["wallScreenMarker"] = true;
+      }
+    })
+  });
 });
