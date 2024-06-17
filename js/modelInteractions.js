@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     headphonesMarker.addEventListener('markerFound', function() {
       window.confirm("Code: .-. .- -.. .. .--- .- - --- .-. ");
       
-      fetch('31.147.206.149:5333/scan', {
+      fetch('/scan', {
         method: 'POST',
-        body: JSON.stringify({ marker_id: 'headphones' }),
+        body: JSON.stringify({ marker_id: "headphones", player: 'player1' }),
         headers: {
           'Content-Type': 'application/json'
         }
