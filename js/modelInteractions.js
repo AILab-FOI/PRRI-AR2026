@@ -315,37 +315,37 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 
   keypadMarker.addEventListener('markerFound', function () {
-    if (markerStatus["keypadMarker"]) return;
     Swal.fire({
       position: 'top-start',
       icon: 'question',
       title: 'Final puzzle',
       text: "Kombinacijom svih prethodnih šifri na kraju zagonetki, otključaj vrata!",
+      input: 'text',
       showCancelButton: true,
       confirmButtonColor: '#4CAF50',
-      cancelButtonColor: '#4CAF50',
       confirmButtonText: 'Ok',
       cancelButtonText: 'Do not show again'
     }).then((result) => {
-      if (result.isConfirmed) {
-        fetch('/scan', {
-          method: 'POST',
-          body: JSON.stringify({ marker_id: "wallScreen", player: 'player1' }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(response => response.json())
-          .then(data => {
-            // Handle the response from the backend
-            console.log(data);
-          })
-          .catch(error => {
-            console.error(error);
-          });
+      if(result.isConfirmed && result.value=="NEURON") {
+        Swal.fire({
+          icon: 'success',
+          title: 'Congratulations!',
+          text: 'Čestitamo, uspješno ste riješili sve zagonetke i otključali vrata!',
+          confirmButtonColor: '#4CAF50',
+          confirmButtonText: 'Ok'
+        });
       }
-      else if (result.isDismissed) {
-        markerStatus["keypadMarker"] = true;
+      else if(result.isConfirmed && result.value!="NEURON") {
+        Swal.fire({
+          icon: 'error',
+          title: 'Wrong answer!',
+          text: 'Pokušajte ponovo!',
+          confirmButtonColor: '#4CAF50',
+          confirmButtonText: 'Ok'
+        });
+      }
+      else{
+        return;
       }
     })
   });
