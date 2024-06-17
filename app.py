@@ -119,33 +119,14 @@ class GameSession(Persistent):
 # Initialize the database if it doesn't already exist
 #db_path = '/'  # Define db_path
 
-'''if not os.path.exists(db_path):
-    storage = ClientStorage.ClientStorage(zeo_server_address)
-    db = DB(storage)
-    connection = db.open()
-    root = connection.root()
-
-    # Load data from the markers JSON file and save it to the database
-    with open(markers_json_path) as json_file:
-        markers_data = json.load(json_file)
-        root['markers'] = markers_data
-
-    # Load data from the models JSON file and save it to the database
-    with open(models_json_path) as json_file:
-        models_data = json.load(json_file)
-        root['models'] = models_data
-
-    # Load data from the quests JSON file and save it to the database
-    with open(quests_json_path) as json_file:
-        quests_data = json.load(json_file)
-        root['quests'] = quests_data
-
-    root['players'] = PersistentList()  # Initialize the list of players
-    root['game_sessions'] = PersistentList()  # Initialize the list of game sessions
-
-    transaction.commit()
-    connection.close()
-'''
+@app.route('/check_answer', methods=['POST'])
+def check_answer():
+    data = request.get_json()
+    answer = data.get('answer')
+    if answer == "NEURON":
+        return jsonify({'status': 'success', 'message': 'Congratulations! You have completed the game!'})
+    else:
+        return jsonify({'status': 'error', 'message': 'Wrong answer! Try again!'})
 
 # Connect to the ZEO server
 storage = ZEO.ClientStorage.ClientStorage(zeo_server_address)

@@ -326,27 +326,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
       confirmButtonText: 'Ok',
       cancelButtonText: 'Do not show again'
     }).then((result) => {
-      if(result.isConfirmed && result.value=="NEURON") {
-        Swal.fire({
-          icon: 'success',
-          title: 'Congratulations!',
-          text: 'Čestitamo, uspješno ste riješili sve zagonetke i otključali vrata!',
-          confirmButtonColor: '#4CAF50',
-          confirmButtonText: 'Ok'
-        });
+      if(result.isConfirmed) {
+        fetch('/check_answer', {
+          method: 'POST',
+          body: JSON.stringify({ answer: result.value }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            if(data.status == 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Congratulations!',
+                text: data.message,
+                confirmButtonColor: '#4CAF50',
+                confirmButtonText: 'Ok'
+              });
+            } else if(data.status == 'error') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Wrong answer!',
+                text: data.message,
+                confirmButtonColor: '#4CAF50',
+                confirmButtonText: 'Ok'
+              });
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
-      else if(result.isConfirmed && result.value!="NEURON") {
-        Swal.fire({
-          icon: 'error',
-          title: 'Wrong answer!',
-          text: 'Pokušajte ponovo!',
-          confirmButtonColor: '#4CAF50',
-          confirmButtonText: 'Ok'
-        });
-      }
-      else{
-        return;
-      }
-    })
+    });
   });
 });
