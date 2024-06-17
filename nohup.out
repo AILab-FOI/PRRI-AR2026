@@ -40,3 +40,25 @@
 2024-06-17T16:38:35 INFO ZEO.runzeo (259629) restarted by SIGHUP
 ------
 2024-06-17T16:38:35 INFO ZEO.StorageServer closing storage '1'
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
+Error: address ('0.0.0.0', 5334) already in use
+For help, use /home/ar/.local/bin/runzeo -h
