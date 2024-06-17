@@ -1,5 +1,7 @@
+import logging
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from ZODB import DB
+import ZEO
 from persistent import Persistent
 from persistent.list import PersistentList
 from ZEO import ClientStorage
@@ -7,6 +9,8 @@ import transaction
 import os
 import json
 import time
+import logging
+logging.basicConfig(filename='app.log', level=logging.DEBUG)
 
 app = Flask(__name__)
 app.config['STATIC_URL_PATH'] = '/static'
@@ -22,34 +26,44 @@ quests_json_path = "json/quests.json"
 def serve_html():
     return send_from_directory('.', 'index.html')
 
+@app.route('/json/<path:filename>')
+def serve_json(filename):
+    return send_from_directory('json', filename)
+
 @app.route('/startPage.html')
 def serve_start_page(): 
     return send_from_directory('static', 'startPage.html')   
 
 # Ruta za posluživanje CSS datoteka
-@app.route('/<path:filename>.css')
+@app.route('/static/start.css')
 def serve_css():
-    return send_from_directory('index', 'start.css')
+    return send_from_directory('static', 'start.css')
 
 # Ruta za posluživanje JavaScript datoteka
-@app.route('/<path:filename>.js')
+@app.route('/js/<path:filename>')
 def serve_js(filename):
-    return send_from_directory('.', filename + '.js')
+    return send_from_directory('js', filename)
+
+@app.route('/ex/js/<path:filename>')
+def serve_ex_js(filename):
+    return send_from_directory('ex/js', filename)
 
 # Ruta za posluživanje slika
-@app.route('/<path:filename>.png')
+@app.route('/images/<path:filename>')
 def serve_png(filename):
-    return send_from_directory('.', filename + '.png')
+    return send_from_directory('images', filename)
 
-@app.route('/<path:filename>.jpg')
-def serve_jpg(filename):
-    return send_from_directory('.', filename + '.jpg')
+@app.route('/Markers/<path:filename>')
+def serve_markers(filename):
+    return send_from_directory('Markers', filename)
 
-# Ruta za posluživanje JSON datoteka
-@app.route('/<path:filename>.json')
-def serve_json(filename):
-    return send_from_directory('.', filename + '.json')
+@app.route('/Models/<path:filename>')
+def serve_folders(filename):
+    return send_from_directory('Models', filename)
 
+@app.route('/Patterns/<path:filename>')
+def serve_patterns(filename):
+    return send_from_directory('Patterns', filename)
 
 class Player(Persistent):
     def __init__(self, id, name, role, game_session=None):
@@ -99,9 +113,9 @@ class GameSession(Persistent):
         self.game_state = game_state
 
 # Initialize the database if it doesn't already exist
-db_path = 'path_to_db'  # Define db_path
+#db_path = '/'  # Define db_path
 
-if not os.path.exists(db_path):
+'''if not os.path.exists(db_path):
     storage = ClientStorage.ClientStorage(zeo_server_address)
     db = DB(storage)
     connection = db.open()
@@ -127,6 +141,40 @@ if not os.path.exists(db_path):
 
     transaction.commit()
     connection.close()
+'''
+
+# Connect to the ZEO server
+storage = ZEO.ClientStorage.ClientStorage(zeo_server_address)
+db = DB(storage)
+# Load data from JSON files into ZODB if they don't already exist
+def initialize_database():
+    with db.transaction() as connection:
+        root = connection.root()
+
+        if 'markers' not in root:
+            with open(markers_json_path) as json_file:
+                markers_data = json.load(json_file)
+                root['markers'] = PersistentList(markers_data)
+
+        if 'models' not in root:
+            with open(models_json_path) as json_file:
+                models_data = json.load(json_file)
+                root['models'] = PersistentList(models_data['models'])
+
+        if 'quests' not in root:
+            with open(quests_json_path) as json_file:
+                quests_data = json.load(json_file)
+                root['quests'] = PersistentList(quests_data['quests'])
+
+        if 'players' not in root:
+            root['players'] = PersistentList()
+
+        if 'game_sessions' not in root:
+            root['game_sessions'] = PersistentList()
+
+        transaction.commit()
+
+initialize_database()
 
 # Route handler for creating a lobby
 @app.route('/create_lobby', methods=['POST'])
@@ -223,7 +271,7 @@ def get_game_sessions():
     return game_sessions
 
 # Route handler for scanning a marker
-@app.route('/scan', methods=['POST'])
+'''@app.route('/scan', methods=['POST'])
 def scan():
     marker_id = request.json.get('marker_id')
     if marker_id:
@@ -246,7 +294,32 @@ def scan():
             connection.close()
             return 'Marker not found in database', 404
     else:
-        return 'Marker ID not provided', 400
+        return 'Marker ID not provided', 400'''
+
+@app.route('/scan', methods=['POST'])
+def scan_marker():
+    data = request.json
+    marker_id = data.get('marker_id')
+
+    if not marker_id:
+        return jsonify({"message": "Marker ID missing in request"}), 400
+
+    with db.transaction() as connection:
+        root = connection.root()
+        markers = root['markers']['markers']  # Directly use the PersistentList
+        logging.info(root['markers'])
+        # Find the marker with matching ID
+        for marker in markers:
+            if marker['id'] == marker_id:
+                marker['isScanned'] = True
+                break
+        else:
+            return jsonify({"message": f"Marker:  '{marker_id}' not found!"}), 404
+
+        transaction.commit()
+    logging.info(root['markers'])
+    return jsonify({"message": f"Marker '{marker_id}' scanned successfully!"}), 200
+    
 
 # Route handler to retrieve game state
 @app.route('/game_state', methods=['GET'])
@@ -378,7 +451,7 @@ def solve_quest():
     for quest in quests:
         if quest['id'] == quest_id:
             if quest['player_id'] == player_id:
-                quest['isCompleted'] = True
+                quest['isScanned'] = True
                 transaction.commit()
                 connection.close()
                 return 'Quest solved successfully'

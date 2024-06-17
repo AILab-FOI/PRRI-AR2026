@@ -3,7 +3,67 @@
         {
             "id": "marker1",
             "player": "player1",
-            "isCompleted": false
+            "isScanned": false
+        },
+        {
+            "id": "radio",
+            "player": "player2",
+            "isScanned": false
+        },
+        {
+            "id": "marker3",
+            "player": "player1",
+            "isScanned": false
+        },
+        {
+            "id": "marker4",
+            "player": "player2",
+            "isScanned": false
+        },
+        {
+            "id": "marker5",
+            "player": "player1",
+            "isScanned": false
+        },
+        {
+            "id": "marker6",
+            "player": "player2",
+            "isScanned": false
+        },
+        {
+            "id": "marker7",
+            "player": "player1",
+            "isScanned": false
+        },
+        {
+            "id": "marker8",
+            "player": "player2",
+            "isScanned": false
+        },
+        {
+            "id": "marker9",
+            "player": "player1",
+            "isScanned": false
+        },
+        {
+            "id": "marker10",
+            "player": "player2",
+            "isScanned": false
+        },
+        {
+            "id": "marker11",
+            "player": "player1",
+            "isScanned": false
+        },
+        {
+            "id": "marker12",
+            "player": "player2",
+            "isScanned": false
+        },
+        {
+            "id": "marker13",
+            "player": ["player1", "player2"],
+            "isScanned": false
         }
     ]
 }

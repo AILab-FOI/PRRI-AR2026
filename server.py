@@ -2,6 +2,7 @@ from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
 import ssl
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from app import app
+import ZEO
 
 # Define SSL context
 context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
