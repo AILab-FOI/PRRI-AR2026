@@ -20,6 +20,10 @@ nohup python3.6 server.py &
 ## Link za stranicu
 https://31.147.206.149:5333/
 
+## GDD
+
+Read our game design document here: https://github.com/AILab-FOI/PRRI-AR2024/wiki/Game-design-document-(GDD)
+
 ## Itch.io
 
 Read more about our videogame on this link: https://ailab-foi.itch.io/prri-ar2024. 
