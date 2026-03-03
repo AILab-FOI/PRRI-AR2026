@@ -1,4 +1,4 @@
-# PRRI-AR2024
+# PRRI-AR2026
 
 An augmented reality escape game developed by students and the [Artificial Intelligence Laboratory](https://ai.foi.hr/) at the [University of Zagreb Faculty of Organization and Informatics](https://www.foi.unizg.hr/). The game is developed using [AR.js](https://github.com/AR-js-org/AR.js/). More details available at [itch.io](https://ailab-foi.itch.io/prri-ar2026).
 
