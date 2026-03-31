@@ -31,6 +31,7 @@
 </style>
 </head>
 <body style="margin : 0px; overflow: hidden;">
+  <audio id="walkmanAudio" src="/audio/zagonetka_1.mp3" preload="auto"></audio> 
   <a-scene
     vr-mode-ui="enabled: false;"
     renderer="logarithmicDepthBuffer: true;"
@@ -126,14 +127,16 @@
       </a-entity>
     </a-marker> 
 
-    <a-marker type="pattern" url="Patterns/Phone_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
+    <a-marker type="pattern" url="Patterns/Phone_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
+      id="walkmanMarker"
+      registerevents>
       <a-entity
-      gltf-model="Models/Phone.glb"
+      gltf-model="Models/sony_walkman.glb"
       scale="5 5 5"
       position="0 0 0"
       rotation="0 270 90"
       material="transparent: true; opacity: 0.6;"
-    >
+      >
       </a-entity>
     </a-marker>
     
