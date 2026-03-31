@@ -11,6 +11,10 @@ To generate patterns you can use [this online tool](https://jeromeetienne.github
 nohup runzeo -a 0.0.0.0:5334 -f None & 
 nohup python3 server.py &
 
+## GDD
+
+Read our game design document here: https://github.com/AILab-FOI/PRRI-AR2026/wiki/Game-design-document%E2%80%90GDD
+
 ## Credits
 
 A previous version of this game has been developed [here](https://github.com/AILab-FOI/PRRI-AR2024).
