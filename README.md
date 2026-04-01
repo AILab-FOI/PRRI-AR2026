@@ -15,6 +15,10 @@ nohup python3 server.py &
 
 Read our game design document here: https://github.com/AILab-FOI/PRRI-AR2026/wiki/Game-design-document%E2%80%90GDD
 
+## Itch.io
+
+Read more about our videogame on this link: https://ailab-foi.itch.io/prri-ar2026
+
 ## Credits
 
 A previous version of this game has been developed [here](https://github.com/AILab-FOI/PRRI-AR2024).
