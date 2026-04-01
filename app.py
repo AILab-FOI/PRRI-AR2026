@@ -9,7 +9,7 @@ import transaction
 import os
 import json
 import time
-import logging
+
 logging.basicConfig(filename='app.log', level=logging.DEBUG)
 
 app = Flask(__name__)
