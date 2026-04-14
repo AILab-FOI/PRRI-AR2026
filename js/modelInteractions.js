@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const consoleMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Hand_scanner_pattern.patt"]');
   const disketaMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Game_cartridge_pattern.patt"]');
   const walkmanMarker = document.querySelector('a-marker[id="walkmanMarker"]');
+  const awakenedPC = document.querySelector('a-marker[id="awakenedPC"]');
   const wallScreenMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Wall_screen_pattern.patt"]');
   const keypadMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Keypad_pattern.patt"]');
 
@@ -245,8 +246,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 walkmanMarker.addEventListener('markerFound', function () {
   Swal.fire({
     position: 'top-start',
-    title: 'Pronašao si Walkman!',
-    text: 'Pritisni Play za reproduciranje poruke...',
+    title: 'Zadatak 1A!',
+    html: 'Pronašao si Walkman! <br> Pritisni Play za reproduciranje poruke...',
     confirmButtonColor: '#4CAF50',
     confirmButtonText: 'Play',
     showCancelButton: false
@@ -255,6 +256,14 @@ walkmanMarker.addEventListener('markerFound', function () {
       const audio = document.getElementById('walkmanAudio');
       audio.play();
     }
+  });
+});
+
+awakenedPC.addEventListener('markerFound', function () {
+  Swal.fire({
+    position: 'top-start',
+    title: 'Zadatak 1B',
+    html: 'Pronašao si Računalo! <br> Poslušaj ponovno i rješenje je slovo koje se najviše puta ponavlja!',
   });
 });
 
