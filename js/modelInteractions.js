@@ -7,7 +7,11 @@ let markerStatus = {
   "disketaMarker": false,
   "phoneMarker": false,
   "wallScreenMarker": false,
-  "keypadMarker": false
+  "keypadMarker": false,
+  "walkmanMarker": false,
+  "awakenedPC": false,
+  "pagerMarker": false,
+  "antennaMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -19,6 +23,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const disketaMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Game_cartridge_pattern.patt"]');
   const walkmanMarker = document.querySelector('a-marker[id="walkmanMarker"]');
   const awakenedPC = document.querySelector('a-marker[id="awakenedPC"]');
+  const pagerMarker = document.querySelector('a-marker[id="pagerMarker"]');
+  const antennaMarker = document.querySelector('a-marker[id="antennaMarker"]');
   const wallScreenMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Wall_screen_pattern.patt"]');
   const keypadMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Keypad_pattern.patt"]');
 
@@ -134,7 +140,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
   );
 
-  laptopMarker.addEventListener('markerFound', function () { 
+  laptopMarker.addEventListener('markerFound', function () {
     if (markerStatus["laptopMarker"]) return;
     Swal.fire({
       position: 'top-start',
@@ -168,7 +174,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         markerStatus["laptopMarker"] = true;
       }
     })
-  
+
   });
 
   consoleMarker.addEventListener('markerFound', function () {
@@ -242,30 +248,50 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     })
   });
-  
-walkmanMarker.addEventListener('markerFound', function () {
-  Swal.fire({
-    position: 'top-start',
-    title: 'Zadatak 1A!',
-    html: 'Pronašao si Walkman! <br> Pritisni Play za reproduciranje poruke...',
-    confirmButtonColor: '#4CAF50',
-    confirmButtonText: 'Play',
-    showCancelButton: false
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const audio = document.getElementById('walkmanAudio');
-      audio.play();
-    }
-  });
-});
 
-awakenedPC.addEventListener('markerFound', function () {
-  Swal.fire({
-    position: 'top-start',
-    title: 'Zadatak 1B',
-    html: 'Pronašao si Računalo! <br> Poslušaj ponovno i rješenje je slovo koje se najviše puta ponavlja!',
+  walkmanMarker.addEventListener('markerFound', function () {
+    if (markerStatus["walkmanMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      title: 'Zadatak 1A!',
+      html: 'Pronašao si Walkman! <br> Pritisni Play za reproduciranje poruke...',
+      confirmButtonColor: '#4CAF50',
+      confirmButtonText: 'Play',
+      showCancelButton: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const audio = document.getElementById('walkmanAudio');
+        audio.play();
+      }
+    });
   });
-});
+
+  awakenedPC.addEventListener('markerFound', function () {
+    if (markerStatus["awakenedPC"]) return;
+    Swal.fire({
+      position: 'top-start',
+      title: 'Zadatak 1B',
+      html: 'Pronašao si Računalo! <br> Poslušaj ponovno i rješenje je slovo koje se najviše puta ponavlja!',
+    });
+  });
+
+  pagerMarker.addEventListener('markerFound', function () {
+    if (markerStatus["pagerMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      title: 'Zadatak 2A',
+      html: 'Pronašao si Pager marker! <br> ',
+    });
+  });
+
+  antennaMarker.addEventListener('markerFound', function () {
+    if (markerStatus["antennaMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      title: 'Zadatak 2B',
+      html: 'Pronašao si Antenna marker! <br> ',
+    });
+  });
 
   wallScreenMarker.addEventListener('markerFound', function () {
     if (markerStatus["wallScreenMarker"]) return;
@@ -315,7 +341,7 @@ awakenedPC.addEventListener('markerFound', function () {
       confirmButtonText: 'Ok',
       cancelButtonText: 'Do not show again'
     }).then((result) => {
-      if(result.isConfirmed) {
+      if (result.isConfirmed) {
         fetch('/check_answer', {
           method: 'POST',
           body: JSON.stringify({ answer: result.value }),
@@ -325,7 +351,7 @@ awakenedPC.addEventListener('markerFound', function () {
         })
           .then(response => response.json())
           .then(data => {
-            if(data.status == 'success') {
+            if (data.status == 'success') {
               Swal.fire({
                 icon: 'success',
                 title: 'Congratulations!',
@@ -333,7 +359,7 @@ awakenedPC.addEventListener('markerFound', function () {
                 confirmButtonColor: '#4CAF50',
                 confirmButtonText: 'Ok'
               });
-            } else if(data.status == 'error') {
+            } else if (data.status == 'error') {
               Swal.fire({
                 icon: 'error',
                 title: 'Wrong answer!',

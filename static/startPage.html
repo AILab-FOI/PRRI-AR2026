@@ -127,6 +127,7 @@
       </a-entity>
     </a-marker> 
 
+    <!-- Zagonetka 1A -->
     <a-marker type="pattern" url="Patterns/Phone_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
       id="walkmanMarker"
       registerevents>
@@ -140,11 +141,40 @@
       </a-entity>
     </a-marker>
 
+    <!-- Zagonetka 1B -->
     <a-marker type="pattern" url="Patterns/PC_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
       id="awakenedPC"
       registerevents>
       <a-entity
       gltf-model="Models/awakened_pc.glb"
+      scale="5 5 5"
+      position="0 0 0"
+      rotation="0 270 90"
+      material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
+
+      <!-- Zagonetka 2A -->
+    <a-marker type="pattern" url="Patterns/Pager_marker.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
+      id="pagerMarker"
+      registerevents>
+      <a-entity
+      gltf-model="Models/pager.glb"
+      scale="5 5 5"
+      position="0 0 0"
+      rotation="0 270 90"
+      material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
+
+    <!-- Zagonetka 2B -->
+    <a-marker type="pattern" url="Patterns/Antenna_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
+      id="antennaMarker"
+      registerevents>
+      <a-entity
+      gltf-model="Models/Antenna.glb"
       scale="5 5 5"
       position="0 0 0"
       rotation="0 270 90"
