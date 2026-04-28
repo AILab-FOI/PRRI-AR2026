@@ -280,7 +280,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 2A',
-      html: 'Pronašao si Pager marker! <br> ',
+      html: '📟 INCOMING SIGNAL...<br><br><b>DATA</b><br><br>⚠️ SIGNAL DISTORTED<br><br>Signal je oštećen. Prenesi informaciju drugom igraču!',
+      confirmButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok'
     });
   });
 
@@ -289,7 +291,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 2B',
-      html: 'Pronašao si Antenna marker! <br> ',
+      html: '📡 SIGNAL RECEIVED<br><br>Uputa: <b>SHIFT EACH CHARACTER -2</b><br><br>Primijeni pravilo na signal koji ti je prenio drugi igrač.<br>Uzmi <b>drugo</b> slovo iz dobivenog niza.',
+      confirmButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok'
     });
   });
 
