@@ -11,7 +11,8 @@ let markerStatus = {
   "walkmanMarker": false,
   "awakenedPC": false,
   "pagerMarker": false,
-  "antennaMarker": false
+  "antennaMarker": false,
+  "numbersMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const antennaMarker = document.querySelector('a-marker[id="antennaMarker"]');
   const wallScreenMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Wall_screen_pattern.patt"]');
   const keypadMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Keypad_pattern.patt"]');
+  const numbersMarker = document.querySelector('a-marker[id="numbersMarker"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -331,6 +333,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
         markerStatus["wallScreenMarker"] = true;
       }
     })
+  });
+
+  numbersMarker.addEventListener('markerFound', function () {
+    if (markerStatus["numbersMarker"]) return;
+    Swal.fire({
+      position: 'top-start',
+      title: 'Zadatak 3',
+      html: '🔢 Uzmi prva dva broja iz modela.<br><br><b>CONVERT TO HEX</b><br><br>Koji je heksadecimalni zapis tog broja?',
+      confirmButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok'
+    });
   });
 
   keypadMarker.addEventListener('markerFound', function () {
