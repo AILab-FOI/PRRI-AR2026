@@ -12,7 +12,8 @@ let markerStatus = {
   "awakenedPC": false,
   "pagerMarker": false,
   "antennaMarker": false,
-  "numbersMarker": false
+  "numbersMarker": false,
+  "neonApollo": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const wallScreenMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Wall_screen_pattern.patt"]');
   const keypadMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Keypad_pattern.patt"]');
   const numbersMarker = document.querySelector('a-marker[id="numbersMarker"]');
+  const neonApollo = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka4_G.patt"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -345,6 +347,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
       confirmButtonText: 'Ok'
     });
   });
+
+  /* Zadatak 4 */
+
+  neonApollo.addEventListener('markerFound', function () {
+    if (markerStatus["neonApollo"]) return;
+    Swal.fire({
+      position: 'top-start',
+      title: 'Zadatak 4',
+      html: '<div style="font-size:18px;"><i>STARO LICE U NOVOM SJAJU</i><br><br><i>UZMI SAMO GLASOVE BUDUĆNOSTI</i><br><br><span style="font-size:26px; color:#00ffff;"><b>NEONSKE</b></span></div>',
+      confirmButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok'
+    });
+  });
+
 
   keypadMarker.addEventListener('markerFound', function () {
     Swal.fire({

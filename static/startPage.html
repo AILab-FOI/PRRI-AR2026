@@ -226,6 +226,7 @@
     >
       </a-entity>
     </a-marker>
+
     <!-- Zagonetka 3 -->
     <a-marker type="pattern" url="Patterns/Numbers_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
     id="numbersMarker">
@@ -238,6 +239,19 @@
       >
       </a-entity>
     </a-marker>    
+
+    <!-- Zagonetka 4 -->
+    <a-marker type="pattern" url="Patterns/Zagonetka4_G.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
+    id="neonApollo">
+      <a-entity
+      gltf-model="Models/neon_apollo.glb"
+      scale="0.5 0.5 0.5"
+      position="0 -2 0"
+      rotation="-90 0 0"
+      material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>  
 
     <a-entity camera></a-entity>
   </a-scene>
