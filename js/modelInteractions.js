@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const keypadMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Keypad_pattern.patt"]');
   const numbersMarker = document.querySelector('a-marker[id="numbersMarker"]');
   const neonApollo = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka4_G.patt"]');
+  const wallClock = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka5_C.patt"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -360,6 +361,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
       confirmButtonText: 'Ok'
     });
   });
+
+  wallClock.addEventListener('markerFound', function () {
+    if (markerStatus["wallClock"]) return;
+    Swal.fire({
+      position: 'top-start',
+      title: 'Zadatak 5',
+      html: 'Pomakni kazaljku za 12 mjesta unaprijed. <br> Bez ponavljanja slova.',
+      confirmButtonColor: '#4CAF50',
+      confirmButtonText: 'Ok'
+    });
+  });
+
 
 
   keypadMarker.addEventListener('markerFound', function () {
