@@ -13,7 +13,9 @@ let markerStatus = {
   "pagerMarker": false,
   "antennaMarker": false,
   "numbersMarker": false,
-  "neonApollo": false
+  "neonApollo": false,
+  "wallClock": false,
+  "memoryMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -32,6 +34,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const numbersMarker = document.querySelector('a-marker[id="numbersMarker"]');
   const neonApollo = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka4_G.patt"]');
   const wallClock = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka5_C.patt"]');
+  const memoryMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Memory_pattern.patt"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -350,7 +353,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 
   /* Zadatak 4 */
-
   neonApollo.addEventListener('markerFound', function () {
     if (markerStatus["neonApollo"]) return;
     Swal.fire({
@@ -362,6 +364,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   });
 
+  /* Zadatak 5 */
   wallClock.addEventListener('markerFound', function () {
     if (markerStatus["wallClock"]) return;
     Swal.fire({
@@ -373,7 +376,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   });
 
+  /* Zadatak 6 */
+  let memoryGameStarted = false;
 
+  memoryMarker.addEventListener('markerFound', () => {
+    if (memoryGameStarted) return;
+    memoryGameStarted = true;
+
+    showMemoryIntro();
+  });
+
+  function showMemoryIntro() {
+    Swal.fire({
+      title: 'Zadatak 6',
+      html: `<div style="color:#00ffcc"><b>NEURONIC MEMORY GRID</b><br>Pronađi jedini stabilni par u sustavu.</div>`,
+      confirmButtonText: 'Ok'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        startMemoryGame();
+      } else {
+        memoryGameStarted = false;
+      }
+    });
+  }
 
   keypadMarker.addEventListener('markerFound', function () {
     Swal.fire({
