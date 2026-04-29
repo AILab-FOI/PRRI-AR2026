@@ -5,6 +5,7 @@
 <script src="ex/js/aframe.min.js"></script>
 <script src="ex/js/aframe-ar.js"></script>
 <script src="js/modelInteractions.js"></script>
+<script src="js/memoryGame.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
@@ -264,7 +265,20 @@
       material="transparent: true; opacity: 0.6;"
       >
       </a-entity>
-    </a-marker>  
+    </a-marker>
+
+    <!-- Zagonetka 6 -->
+    <a-marker type="pattern" url="Patterns/Memory_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
+    id="memoryMarker">
+      <a-entity
+      gltf-model="Models/Memory.glb"
+      scale="50 50 50"
+      position="0 0 0"
+      rotation="-90 -90 90"
+      material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
