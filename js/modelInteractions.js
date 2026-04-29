@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 5',
-      html: 'Pomakni kazaljku za 12 mjesta unaprijed. <br> Bez ponavljanja slova.',
+      html: 'Pomakni manju kazaljku za 12 mjesta unaprijed. <br> Koristi slova engleske abecede počevši od A=1. <br> Bez ponavljanja slova.',
       confirmButtonColor: '#4CAF50',
       confirmButtonText: 'Ok'
     });
