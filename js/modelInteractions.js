@@ -15,7 +15,8 @@ let markerStatus = {
   "numbersMarker": false,
   "neonApollo": false,
   "wallClock": false,
-  "memoryMarker": false
+  "memoryMarker": false,
+  "rebusMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const neonApollo = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka4_G.patt"]');
   const wallClock = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka5_C.patt"]');
   const memoryMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Memory_pattern.patt"]');
+  const rebusMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Rebus_pattern.patt"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -399,6 +401,58 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     });
   }
+
+  /* Zadatak 7 */
+  rebusMarker.addEventListener('markerFound', function () {
+  if (markerStatus["rebusMarker"]) return;
+
+  const validAnswers = ["in bewtween jobs", "izmedu posla", "izmedu dva posla", "posao u poslu", "poso u poslu"];
+
+  Swal.fire({
+    position: 'top-start',
+    title: 'Zadatak 7',
+    html: `
+      <div style="font-size: 22px; font-weight: bold; letter-spacing: 4px; margin-bottom: 16px; font-family: monospace;">
+        JOBINJOB
+      </div>
+      <p style="font-size: 14px; color: #666;">Što se nalazi između dviju riječi?</p>
+      <input id="rebus-input" class="swal2-input" placeholder="Upiši odgovor..." autocomplete="off">
+      <div id="rebus-feedback" style="min-height: 20px; font-size: 13px; margin-top: 8px;"></div>
+    `,
+    confirmButtonText: 'Provjeri',
+    confirmButtonColor: '#7F77DD',
+    showCancelButton: false,
+    allowOutsideClick: false,
+    preConfirm: () => {
+      const val = document.getElementById('rebus-input').value.trim().toLowerCase();
+      const fb = document.getElementById('rebus-feedback');
+
+      if (validAnswers.includes(val)) {
+        return true; // točno
+      } else {
+        fb.style.color = 'red';
+        fb.textContent = 'Nije točno, pokušaj ponovo!';
+        return false; // ostaje otvoren
+      }
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      markerStatus["rebusMarker"] = true;
+
+      Swal.fire({
+        title: 'Točno!',
+        html: `
+          <p>Nagrađuješ se slovom:</p>
+          <div style="font-size: 64px; font-weight: bold; color: #3B6D11; letter-spacing: 8px;">N</div>
+        `,
+        confirmButtonText: 'Nastavi',
+        confirmButtonColor: '#3B6D11',
+        icon: 'success'
+      });
+    }
+  });
+});
+
 
   keypadMarker.addEventListener('markerFound', function () {
     Swal.fire({
