@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Alt-Escape</title>
+<title>Neon escape</title>
 <script src="ex/js/aframe.min.js"></script>
 <script src="ex/js/aframe-ar.js"></script>
 <script src="js/modelInteractions.js"></script>
@@ -288,6 +288,19 @@
       scale="0.1 0.1 0.1"
       position="0 0 0"
       rotation="0 0 0"
+      material="transparent: true; opacity: 0.6;"
+      >
+      </a-entity>
+    </a-marker>
+
+    <!-- Zagonetka 8 -->
+    <a-marker type="pattern" url="Patterns/Julius_Caesar_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
+    id="romanMarker">
+      <a-entity
+      gltf-model="Models/julius-caesar.glb"
+      scale="1.2 1.2 1.2"
+      position="0 0 0"
+      rotation="-90 0 0"
       material="transparent: true; opacity: 0.6;"
       >
       </a-entity>
