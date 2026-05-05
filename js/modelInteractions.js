@@ -16,7 +16,8 @@ let markerStatus = {
   "neonApollo": false,
   "wallClock": false,
   "memoryMarker": false,
-  "rebusMarker": false
+  "rebusMarker": false,
+  "romanMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const wallClock = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka5_C.patt"]');
   const memoryMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Memory_pattern.patt"]');
   const rebusMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Rebus_pattern.patt"]');
+  const romanMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Julius_Caesar_pattern.patt"]');
 
   headphonesMarker.addEventListener('markerFound', function () {
     if (markerStatus["headphonesMarker"]) return;
@@ -451,6 +453,93 @@ document.addEventListener('DOMContentLoaded', (event) => {
       });
     }
   });
+});
+
+/* Zadatak 8 */
+  romanMarker.addEventListener('markerFound', function() {
+    if (markerStatus["romanMarker"]) return;
+
+    Swal.fire({
+        position: 'top-start',
+        title: 'Zadatak 8',
+        html: `
+            <p style="font-size: 14px; color: #666; margin-bottom: 16px;">
+                Pretvori rimske brojeve i zbroji ih
+            </p>
+            <div style="
+                font-family: monospace;
+                font-size: 24px;
+                font-weight: bold;
+                letter-spacing: 3px;
+                background: #f5f5f5;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 16px;
+            ">
+                DCLXXV + MDXLIII = ???
+            </div>
+            <p style="font-size: 12px; color: #999; margin-bottom: 12px;">
+                Upiši rezultat kao broj
+            </p>
+            <input
+                id="roman-input"
+                class="swal2-input"
+                type="number"
+                placeholder="Upiši broj..."
+                style="text-align: center;"
+            >
+            <div id="roman-feedback" style="min-height: 20px; font-size: 13px; margin-top: 8px;"></div>
+        `,
+        confirmButtonText: 'Provjeri',
+        confirmButtonColor: '#7F77DD',
+        showCancelButton: false,
+        allowOutsideClick: false,
+        preConfirm: () => {
+            const val = parseInt(document.getElementById('roman-input').value);
+            const fb = document.getElementById('roman-feedback');
+
+            if (isNaN(val)) {
+                fb.style.color = 'red';
+                fb.textContent = 'Upiši broj prije provjere!';
+                return false;
+            }
+
+            if (val === 2218) {
+                return true;
+            } else {
+                fb.style.color = 'red';
+                fb.textContent = `${val} nije točno. Pokušaj ponovo!`;
+                return false;
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            markerStatus["romanMarker"] = true;
+
+            fetch('/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ marker_id: 'romanMarker' })
+            });
+
+            window.dispatchEvent(new CustomEvent('markerSolved', {
+                detail: { markerId: 'romanMarker' }
+            }));
+
+            Swal.fire({
+                title: 'Točno!',
+                html: `
+                    <p>DCLXXV = 675, MDXLIII = 1543</p>
+                    <p>675 + 1543 = <strong>2218</strong></p>
+                    <p style="margin-top: 12px;">Nagrađuješ se slovom:</p>
+                    <div style="font-size: 64px; font-weight: bold; color: #3B6D11; letter-spacing: 8px;">I</div>
+                `,
+                confirmButtonText: 'Nastavi',
+                confirmButtonColor: '#3B6D11',
+                icon: 'success'
+            });
+        }
+    });
 });
 
 
