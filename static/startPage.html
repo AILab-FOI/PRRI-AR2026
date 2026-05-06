@@ -1,312 +1,125 @@
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Neon escape</title>
-<script src="ex/js/aframe.min.js"></script>
-<script src="ex/js/aframe-ar.js"></script>
-<script src="js/modelInteractions.js"></script>
-<script src="js/memoryGame.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" />
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-<style>
-  .arjs-loader {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  <meta charset="UTF-8">
+  <title>Neon escape</title>
+  <script src="ex/js/aframe.min.js"></script>
+  <script src="ex/js/aframe-ar.js"></script>
+  <script src="js/modelInteractions.js"></script>
+  <script src="js/memoryGame.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+  <style>
+    .arjs-loader {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-  }
-  
-  .arjs-loader div {
-    text-align: center;
-    font-size: 1.25em;
-    color: white;
-  }
-</style>
+    }
+
+    .arjs-loader div {
+      text-align: center;
+      font-size: 1.25em;
+      color: white;
+    }
+  </style>
 </head>
+
 <body style="margin : 0px; overflow: hidden;">
-  <audio id="walkmanAudio" src="/audio/zagonetka_1.mp3" preload="auto"></audio> 
-  <a-scene
-    vr-mode-ui="enabled: false;"
-    renderer="logarithmicDepthBuffer: true;"
-    embedded
-    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
-  >
-
-    <a-marker type="pattern" url="Patterns/Calculator_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-        <a-entity
-        gltf-model="Models/Calculator.glb"
-        scale="3 3 3"
-        position="0 0 0"
-        rotation="0 0 0"
-        material="transparent: true; opacity: 0.6;"
-      >
-      </a-entity>
-    </a-marker>
-
-    <a-marker type="pattern" url="Patterns/Computer_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Computer.glb"
-      scale="0.75 0.75 0.75"
-      position="0 0 0.75"
-      rotation="0 270 90"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker>
-
-    <a-marker type="pattern" url="Patterns/Game_cartridge_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Game_cartridge.glb"
-      scale="0.15 0.15 0.15"
-      position="0 0 0.6"
-      rotation="0 90 270"
-      material="transparent: true; opacity: 0.6;"
-    >
-        </a-entity>
-      </a-marker>
-
-    <a-marker type="pattern" url="Patterns/Hand_scanner_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-        <a-entity
-        gltf-model="Models/Hand_scanner.glb"
-        scale="10 10 10"
-        position="0 0 -0.4"
-        rotation="0 180 0"
-        material="transparent: true; opacity: 0.6;"
-    >
-        </a-entity>
-      </a-marker>
-
-    <a-marker type="pattern" url="Patterns/Headphones_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Headphones.glb"
-      scale="10 10 10"
-      position="0 0 -0.55"
-      rotation="0 270 0"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker>
-    
-    <a-marker type="pattern" url="Patterns/Keypad_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Keypad.glb"
-      scale="0.4 0.4 0.4"
-      position="0 0 0"
-      rotation="270 0 0"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker>
-
-    <a-marker type="pattern" url="Patterns/Laptop_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Laptop.glb"
-      scale="0.9 0.9 0.9"
-      position="0 0 0.75"
-      rotation="0 270 90"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker>
-    
-    <a-marker type="pattern" url="Patterns/Papers_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Papers.glb"
-      scale="1.5 1.5 1.5"
-      position="0 0 -0.4"
-      rotation="180 90 0"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker> 
+  <audio id="walkmanAudio" src="/audio/zagonetka_1.mp3" preload="auto"></audio>
+  <a-scene vr-mode-ui="enabled: false;" renderer="logarithmicDepthBuffer: true;" embedded
+    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;">
 
     <!-- Zagonetka 1A -->
-    <a-marker type="pattern" url="Patterns/Walkman_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-      id="walkmanMarker"
-      registerevents>
-      <a-entity
-      gltf-model="Models/sony_walkman.glb"
-      scale="5 5 5"
-      position="0 0 0"
-      rotation="0 270 90"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/Walkman_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="walkmanMarker" registerevents>
+      <a-entity gltf-model="Models/sony_walkman.glb" scale="5 5 5" position="0 0 0" rotation="0 270 90"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
     <!-- Zagonetka 1B -->
-    <a-marker type="pattern" url="Patterns/PC_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-      id="awakenedPC"
-      registerevents>
-      <a-entity
-      gltf-model="Models/awakened_pc.glb"
-      scale="0.001 0.001 0.001"
-      position="0 0 0"
-      rotation="270 270 90"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/PC_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="awakenedPC" registerevents>
+      <a-entity gltf-model="Models/awakened_pc.glb" scale="0.001 0.001 0.001" position="0 0 0" rotation="270 270 90"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
-      <!-- Zagonetka 2A -->
-    <a-marker type="pattern" url="Patterns/Pager_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-      id="pagerMarker"
-      registerevents>
-      <a-entity
-      gltf-model="Models/pager.glb"
-      scale="0.01 0.01 0.01"
-      position="0 0 0"
-      rotation="0 0 0"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <!-- Zagonetka 2A -->
+    <a-marker type="pattern" url="Patterns/Pager_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="pagerMarker" registerevents>
+      <a-entity gltf-model="Models/pager.glb" scale="0.01 0.01 0.01" position="0 0 0" rotation="0 0 0"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
     <!-- Zagonetka 2B -->
-    <a-marker type="pattern" url="Patterns/Antenna_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-      id="antennaMarker"
-      registerevents>
-      <a-entity
-      gltf-model="Models/Antenna.glb"
-      scale="5 5 5"
-      position="0 0 0"
-      rotation="0 270 90"
-      material="transparent: true; opacity: 0.6;"
-      >
-      </a-entity>
-    </a-marker>
-    
-    <a-marker type="pattern" url="Patterns/Radio_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Radio.glb"
-      scale="6 6 6"
-      position="0 0 0.4"
-      rotation="270 0 0"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker> 
-
-    <a-marker type="pattern" url="Patterns/Terminal_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Terminal.glb"
-      scale="0.5 0.5 0.5"
-      position="0 0 0.5"
-      rotation="0 270 90"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker>     
-
-    <a-marker type="pattern" url="Patterns/TV_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/TV.glb"
-      scale="0.35 0.35 0.35"
-      position="0 0 1"
-      rotation="270 0 0"
-      material="transparent: true; opacity: 0.6;"
-    >
-      </a-entity>
-    </a-marker>
-
-    <a-marker type="pattern" url="Patterns/Wall_screen_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10">
-      <a-entity
-      gltf-model="Models/Wall_screen.glb"
-      scale="3 3 3"
-      position="0 0 0.8"
-      rotation="270 0 0"
-      material="transparent: true; opacity: 0.6;"
-    >
+    <a-marker type="pattern" url="Patterns/Antenna_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="antennaMarker" registerevents>
+      <a-entity gltf-model="Models/Antenna.glb" scale="5 5 5" position="0 0 0" rotation="0 270 90"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
     <!-- Zagonetka 3 -->
-    <a-marker type="pattern" url="Patterns/Numbers_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-    id="numbersMarker">
-      <a-entity
-      gltf-model="Models/numbers.glb"
-      scale="0.1 0.1 0.1"
-      position="0 0 0"
-      rotation="0 -90 90"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/Numbers_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="numbersMarker">
+      <a-entity gltf-model="Models/numbers.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="0 -90 90"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
-    </a-marker>    
+    </a-marker>
 
     <!-- Zagonetka 4 -->
-    <a-marker type="pattern" url="Patterns/Zagonetka4_G.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-    id="neonApollo">
-      <a-entity
-      gltf-model="Models/neon_apollo.glb"
-      scale="0.5 0.5 0.5"
-      position="0 -2 0"
-      rotation="-90 0 0"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/Zagonetka4_G.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="neonApollo">
+      <a-entity gltf-model="Models/neon_apollo.glb" scale="0.5 0.5 0.5" position="0 -2 0" rotation="-90 0 0"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
-    </a-marker>  
+    </a-marker>
 
     <!-- Zagonetka 5 -->
-    <a-marker type="pattern" url="Patterns/Zagonetka5_C.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-    id="wallClock">
-      <a-entity
-      gltf-model="Models/clock_zg5.glb"
-      scale="50 50 50"
-      position="0 0 0"
-      rotation="-90 -90 90"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/Zagonetka5_C.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="wallClock">
+      <a-entity gltf-model="Models/clock_zg5.glb" scale="50 50 50" position="0 0 0" rotation="-90 -90 90"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
     <!-- Zagonetka 6 -->
-    <a-marker type="pattern" url="Patterns/Memory_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-    id="memoryMarker">
-      <a-entity
-      gltf-model="Models/Memory.glb"
-      scale="50 50 50"
-      position="0 0 0"
-      rotation="-90 -90 90"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/Memory_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="memoryMarker">
+      <a-entity gltf-model="Models/Memory.glb" scale="0.7 0.7 0.7" position="0 0 0" rotation="-45 -90 90"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
     <!-- Zagonetka 7 -->
-    <a-marker type="pattern" url="Patterns/Rebus_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-    id="rebusMarker">
-      <a-entity
-      gltf-model="Models/Rebus.glb"
-      scale="0.1 0.1 0.1"
-      position="0 0 0"
-      rotation="0 0 0"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/Rebus_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="rebusMarker">
+      <a-entity gltf-model="Models/Rebus.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="0 0 0"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
     <!-- Zagonetka 8 -->
-    <a-marker type="pattern" url="Patterns/Julius_Caesar_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01" smoothThreshold="10"
-    id="romanMarker">
-      <a-entity
-      gltf-model="Models/julius-caesar.glb"
-      scale="1.2 1.2 1.2"
-      position="0 0 0"
-      rotation="-90 0 0"
-      material="transparent: true; opacity: 0.6;"
-      >
+    <a-marker type="pattern" url="Patterns/Julius_Caesar_pattern.patt" smooth="true" smoothCount="20"
+      smoothTolerance="0.01" smoothThreshold="10" id="romanMarker">
+      <a-entity gltf-model="Models/julius-caesar.glb" scale="1.2 1.2 1.2" position="0 0 0" rotation="-90 0 0"
+        material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
 </body>
+
 </html>
