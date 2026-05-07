@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 1A */
   walkmanMarker.addEventListener('markerFound', function () {
     if (markerStatus["walkmanMarker"]) return;
+    markerStatus["walkmanMarker"] = true;
+    puzzleFound();
+
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 1A!',
@@ -45,70 +48,94 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 1B */
   awakenedPC.addEventListener('markerFound', function () {
     if (markerStatus["awakenedPC"]) return;
+
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 1B',
       html: 'Pronašao si Računalo! <br> Poslušaj ponovno i rješenje je slovo koje se najviše puta ponavlja!',
+    }).then(() => {
+      markerStatus["awakenedPC"] = true;
+      puzzleFound();
     });
   });
 
   /* Zadatak 2A */
   pagerMarker.addEventListener('markerFound', function () {
     if (markerStatus["pagerMarker"]) return;
+
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 2A',
       html: '📟 INCOMING SIGNAL...<br><br><b>DATA</b><br><br>⚠️ SIGNAL DISTORTED<br><br>Signal je oštećen. Prenesi informaciju drugom igraču!',
       confirmButtonColor: '#4CAF50',
       confirmButtonText: 'Ok'
+    }).then(() => {
+      markerStatus["pagerMarker"] = true;
+      puzzleFound();
     });
   });
 
   /* Zadatak 2B */
   antennaMarker.addEventListener('markerFound', function () {
     if (markerStatus["antennaMarker"]) return;
+
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 2B',
       html: '📡 SIGNAL RECEIVED<br><br>Uputa: <b>SHIFT EACH CHARACTER -2</b><br><br>Primijeni pravilo na signal koji ti je prenio drugi igrač.<br>Uzmi <b>drugo</b> slovo iz dobivenog niza.',
       confirmButtonColor: '#4CAF50',
       confirmButtonText: 'Ok'
+    }).then(() => {
+      markerStatus["antennaMarker"] = true;
+      puzzleFound();
     });
   });
 
   /* Zadatak 3 */
   numbersMarker.addEventListener('markerFound', function () {
     if (markerStatus["numbersMarker"]) return;
+
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 3',
       html: '🔢 Uzmi prva dva broja iz modela.<br><br><b>CONVERT TO HEX</b><br><br>Koji je heksadecimalni zapis tog broja?',
       confirmButtonColor: '#4CAF50',
       confirmButtonText: 'Ok'
+    }).then(() => {
+      markerStatus["numbersMarker"] = true;
+      puzzleFound();
     });
   });
 
   /* Zadatak 4 */
   neonApollo.addEventListener('markerFound', function () {
     if (markerStatus["neonApollo"]) return;
+
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 4',
       html: '<div style="font-size:18px;"><i>STARO LICE U NOVOM SJAJU</i><br><br><i>UZMI SAMO GLASOVE BUDUĆNOSTI</i><br><br><span style="font-size:26px; color:#00ffff;"><b>NEONSKE</b></span></div>',
       confirmButtonColor: '#4CAF50',
       confirmButtonText: 'Ok'
+    }).then(() => {
+      markerStatus["neonApollo"] = true;
+      puzzleFound();
     });
   });
 
   /* Zadatak 5 */
   wallClock.addEventListener('markerFound', function () {
     if (markerStatus["wallClock"]) return;
+
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 5',
       html: 'Pomakni manju kazaljku za 12 mjesta unaprijed. <br> Koristi slova engleske abecede počevši od A=1. <br> Bez ponavljanja slova.',
       confirmButtonColor: '#4CAF50',
       confirmButtonText: 'Ok'
+    }).then(() => {
+      markerStatus["wallClock"] = true;
+      puzzleFound();
     });
   });
 
@@ -139,8 +166,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 7 */
   rebusMarker.addEventListener('markerFound', function () {
     if (markerStatus["rebusMarker"]) return;
-
-    const validAnswers = ["in bewtween jobs", "izmedu posla", "izmedu dva posla", "posao u poslu", "poso u poslu"];
+    const validAnswers = ["in between jobs", "izmedu posla", "izmedu dva posla", "posao u poslu", "poso u poslu"];
 
     Swal.fire({
       position: 'top-start',
@@ -172,6 +198,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then((result) => {
       if (result.isConfirmed) {
         markerStatus["rebusMarker"] = true;
+        puzzleFound();
 
         Swal.fire({
           title: 'Točno!',
@@ -247,6 +274,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then((result) => {
       if (result.isConfirmed) {
         markerStatus["romanMarker"] = true;
+        puzzleFound();
 
         fetch('/scan', {
           method: 'POST',
