@@ -105,6 +105,7 @@ function memoryCardClick(index) {
 
         if (firstLetter === "T" && !memoryState.tFound) {
             memoryState.tFound = true;
+            puzzleFound();
 
             setTimeout(() => {
                 Swal.fire({

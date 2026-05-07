@@ -7,6 +7,7 @@
   <script src="ex/js/aframe-ar.js"></script>
   <script src="js/modelInteractions.js"></script>
   <script src="js/memoryGame.js"></script>
+  <script src="js/puzzleCounter.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
@@ -29,6 +30,36 @@
       text-align: center;
       font-size: 1.25em;
       color: white;
+    }
+
+    /* UI za puzzle counter */
+    #puzzle-ui {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+
+      background: rgba(0, 0, 0, 0.75);
+      padding: 15px 25px;
+
+      border-radius: 12px;
+
+      color: white;
+      font-family: Arial, sans-serif;
+
+      text-align: center;
+
+      z-index: 9999;
+    }
+
+    #puzzle-ui h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    #puzzle-counter {
+      margin-top: 10px;
+      font-size: 28px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -117,6 +148,12 @@
         material="transparent: true; opacity: 0.6;">
       </a-entity>
     </a-marker>
+
+    <!-- Puzzle counter -->
+    <div id="puzzle-ui">
+      <h2>Zagonetke</h2>
+      <p id="puzzle-counter">0/10</p>
+    </div>
 
     <a-entity camera></a-entity>
   </a-scene>
