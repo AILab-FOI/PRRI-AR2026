@@ -8,7 +8,8 @@ let markerStatus = {
   "wallClock": false,
   "memoryMarker": false,
   "rebusMarker": false,
-  "romanMarker": false
+  "romanMarker": false,
+  "FinalMarker": false
 };
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -18,10 +19,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const antennaMarker = document.querySelector('a-marker[id="antennaMarker"]');
   const numbersMarker = document.querySelector('a-marker[id="numbersMarker"]');
   const neonApollo = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka4_G.patt"]');
-  const wallClock = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka5_C.patt"]');
+  const wallClock = document.querySelector('a-marker[type="pattern"][url="Patterns/Ispravljeni_marker_5.patt"]');
   const memoryMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Memory_pattern.patt"]');
   const rebusMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Rebus_pattern.patt"]');
   const romanMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Julius_Caesar_pattern.patt"]');
+  const FinalMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka5_C.patt"]');
 
 
   /* Zadatak 1A */
@@ -300,5 +302,109 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
       }
     });
+
+    /*FINALNA ZAGONETKA*/
+    FinalMarker.addEventListener('markerFound', function() {
+    if (markerStatus["FinalMarker"]) return;
+
+    // Ako nisu sve zagonetke riješene
+    if (foundPuzzles < totalPuzzles) {
+        Swal.fire({
+            position: 'top-start',
+            title: 'Finalna zagonetka',
+            html: `
+                <p>Riješi ostale zagonetke da otključaš sva slova!</p>
+                <p style="margin-top: 12px; font-size: 14px; color: #888;">
+                    Riješeno: <strong>${foundPuzzles}/${totalPuzzles}</strong>
+                </p>
+            `,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#7F77DD',
+            icon: 'warning'
+        });
+        return; // Izlaz, marker se NE postavlja na true
+    }
+
+    // Sve zagonetke su riješene — prikaži finalni unos
+    Swal.fire({
+        position: 'top-start',
+        title: 'Finalna zagonetka',
+        html: `
+            <p style="margin-bottom: 16px;">Unesi konačno rješenje:</p>
+            <input
+                id="final-input"
+                class="swal2-input"
+                type="text"
+                placeholder="Upiši rješenje..."
+                style="text-align: center; letter-spacing: 2px;"
+                autocomplete="off"
+            >
+            <div id="final-feedback" style="min-height: 20px; font-size: 13px; margin-top: 8px;"></div>
+        `,
+        confirmButtonText: 'Potvrdi',
+        confirmButtonColor: '#7F77DD',
+        showCancelButton: true,
+        cancelButtonText: 'Izlaz',
+        cancelButtonColor: '#aaa',
+        allowOutsideClick: false,
+        preConfirm: () => {
+            const val = document.getElementById('final-input').value.trim().toUpperCase();
+            const fb = document.getElementById('final-feedback');
+
+            if (!val) {
+                fb.style.color = 'red';
+                fb.textContent = 'Upiši rješenje prije potvrde!';
+                return false;
+            }
+
+            if (val === 'NEON CITY') {
+                return true;
+            } else {
+                fb.style.color = 'red';
+                fb.textContent = 'Pogrešno rješenje, pokušaj ponovo!';
+                return false;
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Postavljamo na true tek kada je rješenje točno uneseno
+            markerStatus["PRIMJER"] = true;
+            puzzleFound();
+
+            let countdown = 10;
+
+            Swal.fire({
+                title: '🏆 Pobijedio si!',
+                html: `
+                    <p style="font-size: 16px;">Čestitamo! Escape room je završen!</p>
+                    <p style="margin-top: 16px; font-size: 14px; color: #888;">
+                        Povratak na početni ekran za
+                        <strong id="swal-countdown">${countdown}</strong> sekundi...
+                    </p>
+                `,
+                confirmButtonText: 'Idi na početak',
+                confirmButtonColor: '#3B6D11',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    const countdownEl = document.getElementById('swal-countdown');
+                    const interval = setInterval(() => {
+                        countdown--;
+                        if (countdownEl) countdownEl.textContent = countdown;
+                        if (countdown <= 0) {
+                            clearInterval(interval);
+                            Swal.close();
+                            window.location.href = '/';
+                        }
+                    }, 1000);
+                }
+            }).then(() => {
+                // Ako korisnik klikne gumb prije isteka 10s
+                window.location.href = '/';
+            });
+        }
+        // Ako je result.isDismissed (Izlaz) — ne radimo ništa, marker ostaje false
+    });
+});
   });
 });
