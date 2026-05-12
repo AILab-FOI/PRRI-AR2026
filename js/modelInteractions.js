@@ -1,3 +1,14 @@
+function reportPuzzle(puzzleId) {
+    fetch('/solve_puzzle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ puzzle_id: puzzleId })
+    })
+    .then(r => r.json())
+    .then(data => { if (window.syncPuzzleCount) window.syncPuzzleCount(data.count); })
+    .catch(() => {});
+}
+
 let markerStatus = {
   "walkmanMarker": false,
   "awakenedPC": false,
@@ -31,6 +42,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     if (markerStatus["walkmanMarker"]) return;
     markerStatus["walkmanMarker"] = true;
     puzzleFound();
+    reportPuzzle('walkmanMarker');
 
     Swal.fire({
       position: 'top-start',
@@ -58,6 +70,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then(() => {
       markerStatus["awakenedPC"] = true;
       puzzleFound();
+      reportPuzzle('awakenedPC');
     });
   });
 
@@ -74,6 +87,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then(() => {
       markerStatus["pagerMarker"] = true;
       puzzleFound();
+      reportPuzzle('pagerMarker');
     });
   });
 
@@ -90,6 +104,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then(() => {
       markerStatus["antennaMarker"] = true;
       puzzleFound();
+      reportPuzzle('antennaMarker');
     });
   });
 
@@ -106,6 +121,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then(() => {
       markerStatus["numbersMarker"] = true;
       puzzleFound();
+      reportPuzzle('numbersMarker');
     });
   });
 
@@ -122,6 +138,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then(() => {
       markerStatus["neonApollo"] = true;
       puzzleFound();
+      reportPuzzle('neonApollo');
     });
   });
 
@@ -138,11 +155,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then(() => {
       markerStatus["wallClock"] = true;
       puzzleFound();
+      reportPuzzle('wallClock');
     });
   });
 
   /* Zadatak 6 */
   let memoryGameStarted = false;
+
+  window.addEventListener('memoryGameClosed', () => {
+    memoryGameStarted = false;
+  });
 
   memoryMarker.addEventListener('markerFound', () => {
     if (memoryGameStarted) return;
@@ -201,6 +223,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (result.isConfirmed) {
         markerStatus["rebusMarker"] = true;
         puzzleFound();
+        reportPuzzle('rebusMarker');
 
         Swal.fire({
           title: 'Točno!',
@@ -277,6 +300,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (result.isConfirmed) {
         markerStatus["romanMarker"] = true;
         puzzleFound();
+        reportPuzzle('romanMarker');
 
         fetch('/scan', {
           method: 'POST',
@@ -367,9 +391,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            // Postavljamo na true tek kada je rješenje točno uneseno
-            markerStatus["PRIMJER"] = true;
-            puzzleFound();
+            markerStatus["FinalMarker"] = true;
+
+            fetch('/complete_game', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            }).catch(() => {});
 
             let countdown = 10;
 

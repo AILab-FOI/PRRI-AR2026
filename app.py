@@ -4,6 +4,7 @@ from ZODB import DB
 import ZEO
 from persistent import Persistent
 from persistent.list import PersistentList
+from persistent.mapping import PersistentMapping
 from ZEO import ClientStorage
 import transaction
 import os
@@ -35,8 +36,12 @@ def serve_json(filename):
     return send_from_directory('json', filename)
 
 @app.route('/startPage.html')
-def serve_start_page(): 
-    return send_from_directory('static', 'startPage.html')   
+def serve_start_page():
+    return send_from_directory('static', 'startPage.html')
+
+@app.route('/progress.html')
+def serve_progress_page():
+    return send_from_directory('static', 'progress.html')
 
 # Ruta za posluživanje CSS datoteka
 @app.route('/static/start.css')
@@ -87,7 +92,8 @@ class GameSession(Persistent):
         self.start_time = time.time()  # Store the start time
         self.players = PersistentList()  # List to store players in the session
         self.game_completed = game_completed
-        self.game_state = {}  # Initialize game state dictionary
+        self.game_state = PersistentMapping()  # puzzle_id -> True
+        self.completion_time = None  # elapsed seconds when game was completed
 
     def add_player(self, player):
         if len(self.players) < 2:  # Provjera maksimalnog broja igrača
@@ -131,6 +137,66 @@ def check_answer():
         return jsonify({'status': 'success', 'message': 'Congratulations! You have completed the game!'})
     else:
         return jsonify({'status': 'error', 'message': 'Wrong answer! Try again!'})
+
+TOTAL_PUZZLES = 10
+
+@app.route('/solve_puzzle', methods=['POST'])
+def solve_puzzle():
+    data = request.get_json()
+    puzzle_id = data.get('puzzle_id')
+    if not puzzle_id:
+        return jsonify({'message': 'puzzle_id required'}), 400
+
+    with db.transaction() as connection:
+        root = connection.root()
+        game_sessions = root.get('game_sessions')
+        if not game_sessions:
+            return jsonify({'message': 'No active session'}), 404
+
+        session = game_sessions[0]
+        if not isinstance(session.game_state, PersistentMapping):
+            session.game_state = PersistentMapping()
+        session.game_state[puzzle_id] = True
+        count = len(session.game_state)
+        transaction.commit()
+
+    return jsonify({'solved': list(session.game_state.keys()), 'count': count, 'total': TOTAL_PUZZLES}), 200
+
+@app.route('/progress', methods=['GET'])
+def progress():
+    with db.transaction() as connection:
+        root = connection.root()
+        game_sessions = root.get('game_sessions')
+        if not game_sessions:
+            return jsonify({'count': 0, 'total': TOTAL_PUZZLES, 'solved': [], 'time_remaining': 0, 'game_completed': False}), 200
+
+        session = game_sessions[0]
+        solved = list(session.game_state.keys()) if session.game_state else []
+        count = len(solved)
+
+    return jsonify({
+        'solved': solved,
+        'count': count,
+        'total': TOTAL_PUZZLES,
+        'time_remaining': round(session.get_remaining_time()),
+        'game_completed': session.game_completed
+    }), 200
+
+@app.route('/complete_game', methods=['POST'])
+def complete_game():
+    with db.transaction() as connection:
+        root = connection.root()
+        game_sessions = root.get('game_sessions')
+        if not game_sessions:
+            return jsonify({'message': 'No active session'}), 404
+
+        session = game_sessions[0]
+        session.game_completed = True
+        elapsed = round(session.time_limit - session.get_remaining_time())
+        session.completion_time = elapsed
+        transaction.commit()
+
+    return jsonify({'message': 'Game completed', 'completion_time': elapsed}), 200
 
 # Connect to the ZEO server
 storage = ZEO.ClientStorage.ClientStorage(zeo_server_address)

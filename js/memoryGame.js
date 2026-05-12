@@ -38,7 +38,10 @@ function startMemoryGame() {
         `,
         showConfirmButton: false,
         width: 520,
-        didOpen: renderMemoryGrid
+        didOpen: renderMemoryGrid,
+        willClose: () => {
+            window.dispatchEvent(new CustomEvent('memoryGameClosed'));
+        }
     });
 }
 
@@ -85,12 +88,13 @@ function memoryCardClick(index) {
 
     if (memoryState.first === null) {
         memoryState.first = index;
-        startMemoryGame();
+        renderMemoryGrid();
         return;
     }
 
     memoryState.second = index;
     memoryState.lock = true;
+    renderMemoryGrid();
 
     const firstIndex = memoryState.first;
     const secondIndex = memoryState.second;
@@ -102,10 +106,16 @@ function memoryCardClick(index) {
 
         memoryState.matched[firstIndex] = true;
         memoryState.matched[secondIndex] = true;
+        memoryState.first = null;
+        memoryState.second = null;
+        memoryState.lock = false;
 
         if (firstLetter === "T" && !memoryState.tFound) {
             memoryState.tFound = true;
             puzzleFound();
+            reportPuzzle('memoryMarker');
+
+            renderMemoryGrid();
 
             setTimeout(() => {
                 Swal.fire({
@@ -113,20 +123,15 @@ function memoryCardClick(index) {
                     title: "✔ Stable Signal Found",
                     text: "Key fragment: T"
                 }).then(() => {
+                    memoryState.initialized = false;
                     startMemoryGame();
                 });
             }, 400);
+        } else {
+            renderMemoryGrid();
         }
 
-        memoryState.first = null;
-        memoryState.second = null;
-        memoryState.lock = false;
-
-        startMemoryGame();
-
     } else {
-
-        startMemoryGame();
 
         setTimeout(() => {
 
@@ -137,7 +142,7 @@ function memoryCardClick(index) {
             memoryState.second = null;
             memoryState.lock = false;
 
-            startMemoryGame();
+            renderMemoryGrid();
 
         }, 700);
     }
