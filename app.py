@@ -86,42 +86,28 @@ class Player(Persistent):
         self.game_session = game_session  # Referenca na instancu GameSession
 
 class GameSession(Persistent):
-    def __init__(self, id, time_limit=2700, game_completed=False):
-        self.id = id
-        self.time_limit = time_limit  # Time limit in seconds
-        self.start_time = time.time()  # Store the start time
-        self.players = PersistentList()  # List to store players in the session
-        self.game_completed = game_completed
-        self.game_state = PersistentMapping()  # puzzle_id -> True
-        self.completion_time = None  # elapsed seconds when game was completed
-
-    def add_player(self, player):
-        if len(self.players) < 2:  # Provjera maksimalnog broja igrača
-            self.players.append(player)
-            player.game_session = self
-        else:
-            raise ValueError("Maximum number of players reached for this session")
-
-    def remove_player(self, player):
-        if player in self.players:
-            self.players.remove(player)
-            player.game_session = None
-        else:
-            raise ValueError("Player not found in this session")
-
-    def complete_game(self):
-        self.game_completed = True
-
-    def get_players(self):
-        return list(self.players)
+    def __init__(self, lobby_name, host_name, time_limit=3600):
+        self.id = lobby_name
+        self.lobby_name = lobby_name
+        self.host_name = host_name
+        self.time_limit = time_limit
+        self.start_time = None
+        self.is_started = False
+        self.players = PersistentList()  # lista stringova (imena igrača)
+        self.game_completed = False
+        self.game_state = PersistentMapping()  # puzzle_id -> player_name
+        self.completion_time = None
 
     def get_remaining_time(self):
+        if not self.is_started or self.start_time is None:
+            return self.time_limit
+        if self.game_completed and self.completion_time is not None:
+            return max(0, self.time_limit - self.completion_time)
         elapsed_time = time.time() - self.start_time
-        remaining_time = self.time_limit - elapsed_time
-        return max(0, remaining_time)  # Ensure remaining time is not negative
+        return max(0, self.time_limit - elapsed_time)
 
     def is_time_up(self):
-        return self.get_remaining_time() <= 0
+        return self.is_started and self.get_remaining_time() <= 0
 
     def update_game_state(self, game_state):
         self.game_state = game_state
@@ -144,23 +130,32 @@ TOTAL_PUZZLES = 10
 def solve_puzzle():
     data = request.get_json()
     puzzle_id = data.get('puzzle_id')
+    player_name = data.get('player_name', 'Unknown')
+    lobby_name = data.get('lobby_name')
+
     if not puzzle_id:
         return jsonify({'message': 'puzzle_id required'}), 400
 
     with db.transaction() as connection:
         root = connection.root()
-        game_sessions = root.get('game_sessions')
-        if not game_sessions:
+        session = None
+        if lobby_name and 'lobbies' in root and lobby_name in root['lobbies']:
+            session = root['lobbies'][lobby_name]
+        else:
+            game_sessions = root.get('game_sessions')
+            if game_sessions:
+                session = game_sessions[0]
+        if not session:
             return jsonify({'message': 'No active session'}), 404
 
-        session = game_sessions[0]
         if not isinstance(session.game_state, PersistentMapping):
             session.game_state = PersistentMapping()
-        session.game_state[puzzle_id] = True
+        if puzzle_id not in session.game_state:
+            session.game_state[puzzle_id] = player_name
         count = len(session.game_state)
         transaction.commit()
 
-    return jsonify({'solved': list(session.game_state.keys()), 'count': count, 'total': TOTAL_PUZZLES}), 200
+    return jsonify({'solved': dict(session.game_state), 'count': count, 'total': TOTAL_PUZZLES}), 200
 
 @app.route('/progress', methods=['GET'])
 def progress():
@@ -184,13 +179,21 @@ def progress():
 
 @app.route('/complete_game', methods=['POST'])
 def complete_game():
+    data = request.get_json() or {}
+    lobby_name = data.get('lobby_name')
+
     with db.transaction() as connection:
         root = connection.root()
-        game_sessions = root.get('game_sessions')
-        if not game_sessions:
+        session = None
+        if lobby_name and 'lobbies' in root and lobby_name in root['lobbies']:
+            session = root['lobbies'][lobby_name]
+        else:
+            game_sessions = root.get('game_sessions')
+            if game_sessions:
+                session = game_sessions[0]
+        if not session:
             return jsonify({'message': 'No active session'}), 404
 
-        session = game_sessions[0]
         session.game_completed = True
         elapsed = round(session.time_limit - session.get_remaining_time())
         session.completion_time = elapsed
@@ -227,68 +230,146 @@ def initialize_database():
         if 'game_sessions' not in root:
             root['game_sessions'] = PersistentList()
 
+        if 'lobbies' not in root:
+            root['lobbies'] = PersistentMapping()
+
         transaction.commit()
 
 initialize_database()
 
-# Route handler for creating a lobby
+@app.route('/delete_lobby/<lobby_name>', methods=['DELETE'])
+def delete_lobby(lobby_name):
+    with db.transaction() as connection:
+        root = connection.root()
+        lobbies = root.get('lobbies', {})
+        if lobby_name not in lobbies:
+            return jsonify({'message': 'Lobby not found'}), 404
+        del lobbies[lobby_name]
+        transaction.commit()
+    return jsonify({'message': 'Lobby deleted'}), 200
+
+
 @app.route('/create_lobby', methods=['POST'])
 def create_lobby():
     player_name = request.json.get('player_name')
-
     if not player_name:
-        return 'Player Name must be provided', 400
+        return jsonify({'message': 'Player name required'}), 400
 
-    storage = ClientStorage.ClientStorage(zeo_server_address)
-    db = DB(storage)
-    connection = db.open()
-    root = connection.root()
-    game_sessions = root['game_sessions']
+    lobby_name = player_name.lower()
 
-    # Determine player role based on lobby occupancy
-    if len(game_sessions) == 0 or len(game_sessions[0].players) < 2:
-        if len(game_sessions) == 0:
-            new_session = GameSession(str(len(game_sessions) + 1), 3600)  # Example time limit: 3600 seconds (1 hour)
-            game_sessions.append(new_session)
-        else:
-            new_session = game_sessions[0]
-
-        if len(new_session.players) == 0:
-            role = 'player1'
-        elif len(new_session.players) == 1:
-            role = 'player2'
-        else:
-            connection.close()
-            return 'Lobby is full', 403
-
-        player_id = role
-        new_player = Player(player_id, player_name, role)
-        new_session.add_player(new_player)
-
+    with db.transaction() as connection:
+        root = connection.root()
+        lobbies = root['lobbies']
+        session = GameSession(lobby_name, player_name, time_limit=3600)
+        session.players.append(player_name)
+        lobbies[lobby_name] = session
         transaction.commit()
-        connection.close()
 
-        return jsonify({'player_id': player_id, 'player_name': player_name, 'role': role}), 200
-    else:
-        connection.close()
-        return 'Lobby is full', 403
+    return jsonify({'lobby_name': lobby_name, 'role': 'host', 'player_name': player_name}), 200
+
+
+@app.route('/join_lobby/<lobby_name>', methods=['POST'])
+def join_lobby(lobby_name):
+    player_name = request.json.get('player_name')
+    if not player_name:
+        return jsonify({'message': 'Player name required'}), 400
+
+    with db.transaction() as connection:
+        root = connection.root()
+        lobbies = root['lobbies']
+        if lobby_name not in lobbies:
+            return jsonify({'message': 'Lobby not found'}), 404
+        session = lobbies[lobby_name]
+        if session.is_started:
+            return jsonify({'message': 'Game already started'}), 403
+        if player_name not in list(session.players):
+            session.players.append(player_name)
+        transaction.commit()
+
+    return jsonify({'lobby_name': lobby_name, 'role': 'player', 'player_name': player_name, 'host': session.host_name}), 200
+
+
+@app.route('/lobby/<lobby_name>', methods=['GET'])
+def serve_lobby_page(lobby_name):
+    return send_from_directory('static', 'lobby.html')
+
+
+@app.route('/lobby/<lobby_name>/status', methods=['GET'])
+def lobby_status(lobby_name):
+    with db.transaction() as connection:
+        root = connection.root()
+        lobbies = root['lobbies']
+        if lobby_name not in lobbies:
+            return jsonify({'message': 'Lobby not found'}), 404
+        session = lobbies[lobby_name]
+        return jsonify({
+            'lobby_name': lobby_name,
+            'host': session.host_name,
+            'players': list(session.players),
+            'is_started': session.is_started,
+            'player_count': len(session.players)
+        }), 200
+
+
+@app.route('/start_game/<lobby_name>', methods=['POST'])
+def start_game(lobby_name):
+    with db.transaction() as connection:
+        root = connection.root()
+        lobbies = root['lobbies']
+        if lobby_name not in lobbies:
+            return jsonify({'message': 'Lobby not found'}), 404
+        session = lobbies[lobby_name]
+        session.is_started = True
+        session.start_time = time.time()
+        transaction.commit()
+    return jsonify({'message': 'Game started', 'lobby_name': lobby_name}), 200
+
+
+@app.route('/startPage.html/<lobby_name>', methods=['GET'])
+def serve_game_page(lobby_name):
+    return send_from_directory('static', 'startPage.html')
+
+
+@app.route('/lobby/<lobby_name>/progress', methods=['GET'])
+def lobby_progress(lobby_name):
+    with db.transaction() as connection:
+        root = connection.root()
+        lobbies = root['lobbies']
+        if lobby_name not in lobbies:
+            return jsonify({'message': 'Lobby not found'}), 404
+        session = lobbies[lobby_name]
+        solved_by = dict(session.game_state)
+        return jsonify({
+            'solved_by': solved_by,
+            'count': len(solved_by),
+            'total': TOTAL_PUZZLES,
+            'time_remaining': round(session.get_remaining_time()),
+            'game_completed': session.game_completed,
+            'players': list(session.players),
+            'host': session.host_name,
+            'is_started': session.is_started
+        }), 200
+
+
+@app.route('/lobbies', methods=['GET'])
+def list_lobbies():
+    with db.transaction() as connection:
+        root = connection.root()
+        lobbies = root.get('lobbies', {})
+        result = [{'lobby_name': name, 'host': s.host_name, 'player_count': len(s.players), 'is_started': s.is_started}
+                  for name, s in lobbies.items()]
+        return jsonify(result), 200
+
 
 @app.route('/start_timer', methods=['POST'])
 def start_timer():
-    storage = ClientStorage.ClientStorage(zeo_server_address)
-    db = DB(storage)
-    connection = db.open()
-    root = connection.root()
-    game_sessions = root['game_sessions']
-
-    if len(game_sessions) > 0:
-        session = game_sessions[0]
-        session.start_time = time.time()
-        transaction.commit()
-        connection.close()
-        return jsonify({'message': 'Game started'}), 200
-    else:
-        connection.close()
+    with db.transaction() as connection:
+        root = connection.root()
+        game_sessions = root.get('game_sessions')
+        if game_sessions:
+            game_sessions[0].start_time = time.time()
+            transaction.commit()
+            return jsonify({'message': 'Game started'}), 200
         return jsonify({'message': 'No game session found'}), 404
 
 
