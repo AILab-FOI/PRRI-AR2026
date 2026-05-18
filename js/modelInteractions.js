@@ -5,7 +5,7 @@ function reportPuzzle(puzzleId) {
         body: JSON.stringify({ puzzle_id: puzzleId })
     })
     .then(r => r.json())
-    .then(data => { if (window.syncPuzzleCount) window.syncPuzzleCount(data.count); })
+    .then(() => { if (window.refreshPuzzleCount) window.refreshPuzzleCount(); })
     .catch(() => {});
 }
 
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const memoryMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Memory_pattern.patt"]');
   const rebusMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Rebus_pattern.patt"]');
   const romanMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Julius_Caesar_pattern.patt"]');
-  const FinalMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Zagonetka5_C.patt"]');
+  const FinalMarker = document.querySelector('a-marker[type="pattern"][url="Patterns/Portal_pattern.patt"]');
 
 
   /* Zadatak 1A */
@@ -327,112 +327,105 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     });
 
-    /*FINALNA ZAGONETKA*/
-    FinalMarker.addEventListener('markerFound', function() {
+  });
+
+  /* FINALNA ZAGONETKA */
+  FinalMarker.addEventListener('markerFound', function () {
     if (markerStatus["FinalMarker"]) return;
 
-    // Ako nisu sve zagonetke riješene
-    if (foundPuzzles < totalPuzzles) {
-        Swal.fire({
-            position: 'top-start',
-            title: 'Finalna zagonetka',
-            html: `
-                <p>Riješi ostale zagonetke da otključaš sva slova!</p>
-                <p style="margin-top: 12px; font-size: 14px; color: #888;">
-                    Riješeno: <strong>${foundPuzzles}/${totalPuzzles}</strong>
-                </p>
-            `,
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#7F77DD',
-            icon: 'warning'
-        });
-        return; // Izlaz, marker se NE postavlja na true
-    }
+    const solved = window._puzzleCount ?? 0;
+    const total  = window._puzzleTotal ?? 10;
 
-    // Sve zagonetke su riješene — prikaži finalni unos
-    Swal.fire({
+    if (solved < total) {
+      Swal.fire({
         position: 'top-start',
         title: 'Finalna zagonetka',
         html: `
-            <p style="margin-bottom: 16px;">Unesi konačno rješenje:</p>
-            <input
-                id="final-input"
-                class="swal2-input"
-                type="text"
-                placeholder="Upiši rješenje..."
-                style="text-align: center; letter-spacing: 2px;"
-                autocomplete="off"
-            >
-            <div id="final-feedback" style="min-height: 20px; font-size: 13px; margin-top: 8px;"></div>
+          <p>Riješi ostale zagonetke da otključaš sva slova!</p>
+          <p style="margin-top: 12px; font-size: 14px; color: #888;">
+            Riješeno: <strong>${solved}/${total}</strong>
+          </p>
         `,
-        confirmButtonText: 'Potvrdi',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#7F77DD',
-        showCancelButton: true,
-        cancelButtonText: 'Izlaz',
-        cancelButtonColor: '#aaa',
-        allowOutsideClick: false,
-        preConfirm: () => {
-            const val = document.getElementById('final-input').value.trim().toUpperCase();
-            const fb = document.getElementById('final-feedback');
+        icon: 'warning'
+      });
+      return;
+    }
 
-            if (!val) {
-                fb.style.color = 'red';
-                fb.textContent = 'Upiši rješenje prije potvrde!';
-                return false;
-            }
-
-            if (val === 'NEON CITY') {
-                return true;
-            } else {
-                fb.style.color = 'red';
-                fb.textContent = 'Pogrešno rješenje, pokušaj ponovo!';
-                return false;
-            }
+    Swal.fire({
+      position: 'top-start',
+      title: 'Finalna zagonetka',
+      html: `
+        <p style="margin-bottom: 16px;">Unesi konačno rješenje:</p>
+        <input
+          id="final-input"
+          class="swal2-input"
+          type="text"
+          placeholder="Upiši rješenje..."
+          style="text-align: center; letter-spacing: 2px;"
+          autocomplete="off"
+        >
+        <div id="final-feedback" style="min-height: 20px; font-size: 13px; margin-top: 8px;"></div>
+      `,
+      confirmButtonText: 'Potvrdi',
+      confirmButtonColor: '#7F77DD',
+      showCancelButton: true,
+      cancelButtonText: 'Izlaz',
+      cancelButtonColor: '#aaa',
+      allowOutsideClick: false,
+      preConfirm: () => {
+        const val = document.getElementById('final-input').value.trim().toUpperCase();
+        const fb  = document.getElementById('final-feedback');
+        if (!val) {
+          fb.style.color = 'red';
+          fb.textContent = 'Upiši rješenje prije potvrde!';
+          return false;
         }
+        if (val === 'NEON CITY') return true;
+        fb.style.color = 'red';
+        fb.textContent = 'Pogrešno rješenje, pokušaj ponovo!';
+        return false;
+      }
     }).then((result) => {
-        if (result.isConfirmed) {
-            markerStatus["FinalMarker"] = true;
+      if (!result.isConfirmed) return;
+      markerStatus["FinalMarker"] = true;
 
-            fetch('/complete_game', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
-            }).catch(() => {});
+      fetch('/complete_game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      }).catch(() => {});
 
-            let countdown = 10;
-
-            Swal.fire({
-                title: '🏆 Pobijedio si!',
-                html: `
-                    <p style="font-size: 16px;">Čestitamo! Escape room je završen!</p>
-                    <p style="margin-top: 16px; font-size: 14px; color: #888;">
-                        Povratak na početni ekran za
-                        <strong id="swal-countdown">${countdown}</strong> sekundi...
-                    </p>
-                `,
-                confirmButtonText: 'Idi na početak',
-                confirmButtonColor: '#3B6D11',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    const countdownEl = document.getElementById('swal-countdown');
-                    const interval = setInterval(() => {
-                        countdown--;
-                        if (countdownEl) countdownEl.textContent = countdown;
-                        if (countdown <= 0) {
-                            clearInterval(interval);
-                            Swal.close();
-                            window.location.href = '/';
-                        }
-                    }, 1000);
-                }
-            }).then(() => {
-                // Ako korisnik klikne gumb prije isteka 10s
-                window.location.href = '/';
-            });
+      let countdown = 10;
+      Swal.fire({
+        title: '🏆 Pobijedio si!',
+        html: `
+          <p style="font-size: 16px;">Čestitamo! Escape room je završen!</p>
+          <p style="margin-top: 16px; font-size: 14px; color: #888;">
+            Povratak na početni ekran za
+            <strong id="swal-countdown">${countdown}</strong> sekundi...
+          </p>
+        `,
+        confirmButtonText: 'Idi na početak',
+        confirmButtonColor: '#3B6D11',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          const countdownEl = document.getElementById('swal-countdown');
+          const interval = setInterval(() => {
+            countdown--;
+            if (countdownEl) countdownEl.textContent = countdown;
+            if (countdown <= 0) {
+              clearInterval(interval);
+              Swal.close();
+              window.location.href = '/';
+            }
+          }, 1000);
         }
-        // Ako je result.isDismissed (Izlaz) — ne radimo ništa, marker ostaje false
+      }).then(() => {
+        window.location.href = '/';
+      });
     });
-});
   });
 });

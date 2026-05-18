@@ -1,37 +1,27 @@
-let foundPuzzles = 0;
-const totalPuzzles = 10;
+const TOTAL_PUZZLES = 10;
 
 document.addEventListener("DOMContentLoaded", () => {
+    const counterElement = document.getElementById("puzzle-counter");
 
-    const counterElement =
-        document.getElementById("puzzle-counter");
-
-    function updatePuzzleCounter() {
-        counterElement.textContent =
-            `${foundPuzzles}/${totalPuzzles}`;
-    }
-
-    window.puzzleFound = function () {
-        if (foundPuzzles < totalPuzzles) {
-            foundPuzzles++;
-            updatePuzzleCounter();
-        }
-    }
-
-    window.syncPuzzleCount = function (count) {
-        if (count > foundPuzzles) {
-            foundPuzzles = count;
-            updatePuzzleCounter();
-        }
-    }
-
-    // Sinkronizacija progresa između igrača
-    setInterval(() => {
+    function fetchAndUpdate() {
         fetch('/progress')
             .then(r => r.json())
-            .then(data => window.syncPuzzleCount(data.count))
+            .then(data => {
+                const count = data.count ?? 0;
+                const total = data.total ?? TOTAL_PUZZLES;
+                counterElement.textContent = `${count}/${total}`;
+                window._puzzleCount = count;
+                window._puzzleTotal = total;
+            })
             .catch(() => {});
-    }, 4000);
+    }
 
-    updatePuzzleCounter();
+    window.refreshPuzzleCount = fetchAndUpdate;
+
+    // no-op — lokalni inkrement više ne postoji
+    window.puzzleFound = function () {};
+    window.syncPuzzleCount = function () {};
+
+    fetchAndUpdate();
+    setInterval(fetchAndUpdate, 3000);
 });
