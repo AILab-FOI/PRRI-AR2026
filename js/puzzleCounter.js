@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const counterElement = document.getElementById("puzzle-counter");
 
     function fetchAndUpdate() {
-        fetch('/progress')
+        const url = window.LOBBY_NAME ? `/lobby/${window.LOBBY_NAME}/progress` : '/progress';
+        fetch(url)
             .then(r => r.json())
             .then(data => {
                 const count = data.count ?? 0;
