@@ -1,67 +1,57 @@
 {
     "markers": [
         {
-            "id": "marker1",
+            "id": "walkmanMarker",
             "player": "player1",
             "isScanned": false
         },
         {
-            "id": "radio",
+            "id": "awakenedPC",
             "player": "player2",
             "isScanned": false
         },
         {
-            "id": "marker3",
+            "id": "pagerMarker",
             "player": "player1",
             "isScanned": false
         },
         {
-            "id": "marker4",
+            "id": "antennaMarker",
             "player": "player2",
             "isScanned": false
         },
         {
-            "id": "marker5",
+            "id": "numbersMarker",
             "player": "player1",
             "isScanned": false
         },
         {
-            "id": "marker6",
+            "id": "neonApollo",
             "player": "player2",
             "isScanned": false
         },
         {
-            "id": "marker7",
+            "id": "wallClock",
             "player": "player1",
             "isScanned": false
         },
         {
-            "id": "marker8",
+            "id": "memoryMarker",
             "player": "player2",
             "isScanned": false
         },
         {
-            "id": "marker9",
+            "id": "rebusMarker",
             "player": "player1",
             "isScanned": false
         },
         {
-            "id": "marker10",
+            "id": "romanMarker",
             "player": "player2",
             "isScanned": false
         },
         {
-            "id": "marker11",
-            "player": "player1",
-            "isScanned": false
-        },
-        {
-            "id": "marker12",
-            "player": "player2",
-            "isScanned": false
-        },
-        {
-            "id": "marker13",
+            "id": "FinalMarker",
             "player": ["player1", "player2"],
             "isScanned": false
         }

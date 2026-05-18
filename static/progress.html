@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Neon Escape — Progress</title>
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: black;
+      color: turquoise;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      text-decoration: underline;
+      color: turquoise;
+      margin-bottom: 30px;
+    }
+
+    section {
+      border: 2px solid purple;
+      padding: 20px;
+      margin: auto;
+      max-width: 700px;
+      background-color: black;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 0;
+      color: turquoise;
+    }
+
+    .stat {
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .big {
+      font-size: 48px;
+      font-weight: bold;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .puzzle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .puzzle-item {
+      padding: 10px 14px;
+      border: 1px dashed gray;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .puzzle-item.solved {
+      border-color: turquoise;
+      color: turquoise;
+    }
+
+    .puzzle-item.unsolved {
+      color: gray;
+      border-color: #333;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.solved { background-color: turquoise; }
+    .dot.unsolved { background-color: #333; }
+
+    .completed-banner {
+      text-align: center;
+      font-size: 24px;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 16px;
+      margin: auto;
+      max-width: 700px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .timer {
+      font-size: 42px;
+      font-weight: bold;
+      text-align: center;
+      color: turquoise;
+      margin: 10px 0;
+    }
+
+    .timer.warning { color: orange; }
+    .timer.danger { color: red; }
+
+    .status-bar {
+      text-align: center;
+      font-size: 13px;
+      color: gray;
+      margin-top: 20px;
+    }
+
+    #no-session {
+      text-align: center;
+      font-size: 20px;
+      color: gray;
+      margin-top: 40px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>NEON ESCAPE — ADMIN PROGRESS</h1>
+
+  <div class="completed-banner" id="completed-banner">
+    ✓ IGRA ZAVRŠENA!
+  </div>
+
+  <p id="no-session">Nema aktivne sesije.</p>
+
+  <section id="main-section">
+    <h2>Zagonetke</h2>
+    <div class="big" id="counter">0/10</div>
+    <div class="puzzle-grid" id="puzzle-grid"></div>
+  </section>
+
+  <section id="timer-section">
+    <h2>Preostalo vrijeme</h2>
+    <div class="timer" id="timer">--:--</div>
+  </section>
+
+  <div class="status-bar" id="status-bar">Učitavanje...</div>
+
+  <script>
+    const PUZZLES = [
+      { id: 'walkmanMarker',  label: 'Zag. 1A — Walkman' },
+      { id: 'awakenedPC',     label: 'Zag. 1B — PC' },
+      { id: 'pagerMarker',    label: 'Zag. 2A — Pager' },
+      { id: 'antennaMarker',  label: 'Zag. 2B — Antena' },
+      { id: 'numbersMarker',  label: 'Zag. 3 — Brojevi' },
+      { id: 'neonApollo',     label: 'Zag. 4 — Neon Apollo' },
+      { id: 'wallClock',      label: 'Zag. 5 — Sat' },
+      { id: 'memoryMarker',   label: 'Zag. 6 — Memory' },
+      { id: 'rebusMarker',    label: 'Zag. 7 — Rebus' },
+      { id: 'romanMarker',    label: 'Zag. 8 — Julius Caesar' },
+    ];
+
+    function formatTime(seconds) {
+      if (seconds <= 0) return '00:00';
+      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    async function refresh() {
+      try {
+        const res = await fetch('/progress');
+        const data = await res.json();
+
+        const noSession = document.getElementById('no-session');
+        const mainSection = document.getElementById('main-section');
+        const timerSection = document.getElementById('timer-section');
+        const completedBanner = document.getElementById('completed-banner');
+
+        if (data.count === 0 && data.time_remaining === 0 && !data.game_completed) {
+          noSession.style.display = 'block';
+          mainSection.style.display = 'none';
+          timerSection.style.display = 'none';
+          document.getElementById('status-bar').textContent = 'Ažurirano: ' + new Date().toLocaleTimeString();
+          return;
+        }
+
+        noSession.style.display = 'none';
+        mainSection.style.display = 'block';
+        timerSection.style.display = 'block';
+
+        document.getElementById('counter').textContent = `${data.count}/${data.total}`;
+
+        const grid = document.getElementById('puzzle-grid');
+        grid.innerHTML = '';
+        PUZZLES.forEach(p => {
+          const solved = data.solved.includes(p.id);
+          const div = document.createElement('div');
+          div.className = 'puzzle-item ' + (solved ? 'solved' : 'unsolved');
+          div.innerHTML = `<div class="dot ${solved ? 'solved' : 'unsolved'}"></div>${p.label}`;
+          grid.appendChild(div);
+        });
+
+        const timerEl = document.getElementById('timer');
+        const t = data.time_remaining;
+        timerEl.textContent = formatTime(t);
+        timerEl.className = 'timer' + (t < 120 ? ' danger' : t < 300 ? ' warning' : '');
+
+        completedBanner.style.display = data.game_completed ? 'block' : 'none';
+
+        document.getElementById('status-bar').textContent = 'Ažurirano: ' + new Date().toLocaleTimeString();
+      } catch (e) {
+        document.getElementById('status-bar').textContent = 'Greška pri dohvatu podataka — ' + new Date().toLocaleTimeString();
+      }
+    }
+
+    refresh();
+    setInterval(refresh, 3000);
+  </script>
+</body>
+</html>
