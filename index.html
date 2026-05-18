@@ -1,25 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AILab-FOI AR</title>
+    <title>Neon Escape</title>
     <link rel="stylesheet" href="/static/start.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="js/lobby.js"></script>
 </head>
 <body>
+    <section>
         <label for="player-name-input">Unesite korisničko ime:</label>
-        <input type="text" id="player-name-input" name="player-name-input">
-
+        <input type="text" id="player-name-input" name="player-name-input" placeholder="Vaše ime">
         <button id="create-lobby-button">Stvori lobby</button>
-        <button id="start-game-button">Pokreni igru</button>
-
-        <!-- Dodani lobby status -->
-        <div id="lobby-info" style="display: none;">
-            <p id="lobby-status"></p>
-        </div>
+        <div id="error-msg" style="display:none; color:red; margin-top:10px;"></div>
     </section>
 
+    <script>
+        document.getElementById('create-lobby-button').addEventListener('click', function () {
+            const playerName = document.getElementById('player-name-input').value.trim();
+            if (!playerName) { alert('Unesite ime'); return; }
+
+            fetch('/create_lobby', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ player_name: playerName })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.lobby_name) {
+                    sessionStorage.setItem('playerName', playerName);
+                    sessionStorage.setItem('lobbyName', data.lobby_name);
+                    sessionStorage.setItem('isHost', 'true');
+                    window.location.href = '/lobby/' + data.lobby_name;
+                } else {
+                    const err = document.getElementById('error-msg');
+                    err.textContent = data.message || 'Greška pri stvaranju lobbyja';
+                    err.style.display = 'block';
+                }
+            })
+            .catch(() => {
+                const err = document.getElementById('error-msg');
+                err.textContent = 'Greška veze';
+                err.style.display = 'block';
+            });
+        });
+    </script>
 </body>
 </html>
