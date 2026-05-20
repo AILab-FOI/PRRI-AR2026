@@ -13,6 +13,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 counterElement.textContent = `${count}/${total}`;
                 window._puzzleCount = count;
                 window._puzzleTotal = total;
+
+                if (data.game_completed && !window._gameEnded) {
+                    window._gameEnded = true;
+                    Swal.fire({
+                        title: '🏆 Igra završena!',
+                        text: 'Vaš tim je riješio sve zagonetke!',
+                        icon: 'success',
+                        confirmButtonText: 'Povratak na početak',
+                        timer: 10000,
+                        timerProgressBar: true,
+                        allowOutsideClick: false
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                }
             })
             .catch(() => {});
     }

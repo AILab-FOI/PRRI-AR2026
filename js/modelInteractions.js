@@ -395,6 +395,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (!result.isConfirmed) return;
       markerStatus["FinalMarker"] = true;
 
+      window._gameEnded = true;
       fetch('/complete_game', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
