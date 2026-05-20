@@ -1,4 +1,5 @@
 function reportPuzzle(puzzleId) {
+  const gameEndSound=new Audio("audio/game_end.mp3")
     fetch('/solve_puzzle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -394,6 +395,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }).then((result) => {
       if (!result.isConfirmed) return;
       markerStatus["FinalMarker"] = true;
+      gameEndSound.currentTime=0;
+      gameEndSound.play();
 
       window._gameEnded = true;
       fetch('/complete_game', {
