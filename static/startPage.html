@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Neon escape</title>
+  <base href="/">
+  <script>
+    (function () {
+      var parts = window.location.pathname.split('/').filter(Boolean);
+      window.LOBBY_NAME = parts.length >= 2 ? parts[parts.length - 1] : null;
+      window.PLAYER_NAME = sessionStorage.getItem('playerName') || 'Unknown';
+    })();
+  </script>
   <script src="ex/js/aframe.min.js"></script>
   <script src="ex/js/aframe-ar.js"></script>
   <script src="js/modelInteractions.js"></script>

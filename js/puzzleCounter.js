@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const counterElement = document.getElementById("puzzle-counter");
 
     function fetchAndUpdate() {
-        fetch('/progress')
+        const url = window.LOBBY_NAME ? `/lobby/${window.LOBBY_NAME}/progress` : '/progress';
+        fetch(url)
             .then(r => r.json())
             .then(data => {
                 const count = data.count ?? 0;
@@ -12,6 +13,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 counterElement.textContent = `${count}/${total}`;
                 window._puzzleCount = count;
                 window._puzzleTotal = total;
+
+                if (data.game_completed && !window._gameEnded) {
+                    window._gameEnded = true;
+                    Swal.fire({
+                        title: '🏆 Igra završena!',
+                        text: 'Vaš tim je riješio sve zagonetke!',
+                        icon: 'success',
+                        confirmButtonText: 'Povratak na početak',
+                        timer: 10000,
+                        timerProgressBar: true,
+                        allowOutsideClick: false
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                }
             })
             .catch(() => {});
     }

@@ -2,7 +2,11 @@ function reportPuzzle(puzzleId) {
     fetch('/solve_puzzle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ puzzle_id: puzzleId })
+        body: JSON.stringify({
+            puzzle_id: puzzleId,
+            player_name: window.PLAYER_NAME || 'Unknown',
+            lobby_name: window.LOBBY_NAME || null
+        })
     })
     .then(r => r.json())
     .then(() => { if (window.refreshPuzzleCount) window.refreshPuzzleCount(); })
@@ -391,10 +395,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if (!result.isConfirmed) return;
       markerStatus["FinalMarker"] = true;
 
+      window._gameEnded = true;
       fetch('/complete_game', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+        body: JSON.stringify({ lobby_name: window.LOBBY_NAME || null })
       }).catch(() => {});
 
       let countdown = 10;

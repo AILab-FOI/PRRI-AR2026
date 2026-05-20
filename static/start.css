@@ -34,13 +34,10 @@
     font-size: 20px;
   }
 
-  section {
-    border: 2px solid purple; /* Terminal border */
-    padding: 20px;
-    margin: auto; /* Center the terminal */
-    max-width: 800px; /* Limit terminal width */
-    background-color:black;
-  }
+section~label {
+  background-color: black;
+  font-size: medium;
+}
 table{
     padding: 10px;
     border-style: dashed;

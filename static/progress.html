@@ -131,15 +131,38 @@
     ✓ IGRA ZAVRŠENA!
   </div>
 
-  <p id="no-session">Nema aktivne sesije.</p>
+  <!-- Odabir lobbyja ako nije zadan u URL-u -->
+  <section id="lobby-select-section" style="display:none">
+    <h2>Odaberi lobby</h2>
+    <div id="lobby-list" style="margin-top:10px;"></div>
+    <div style="margin-top:16px; font-size:14px; color:gray;">ili unesi ručno:</div>
+    <input type="text" id="lobby-input" placeholder="ime lobbyja"
+      style="width:100%;padding:8px;background:#111;border:1px solid turquoise;color:turquoise;font-family:inherit;font-size:15px;margin-top:8px;">
+    <button onclick="selectLobby(document.getElementById('lobby-input').value.trim())"
+      style="width:100%;padding:10px;margin-top:10px;background:transparent;border:2px solid turquoise;color:turquoise;font-family:inherit;font-size:15px;cursor:pointer;">
+      Prikaži
+    </button>
+  </section>
 
-  <section id="main-section">
-    <h2>Zagonetke</h2>
+  <p id="no-session" style="display:none;">Nema aktivne sesije.</p>
+
+  <section id="main-section" style="display:none">
+    <h2>Zagonetke — <span id="lobby-label" style="color:purple"></span>
+      <button id="delete-lobby-btn" onclick="deleteLobby()"
+        style="float:right;padding:4px 12px;background:transparent;border:1px solid red;color:red;font-family:inherit;font-size:13px;cursor:pointer;">
+        Obriši lobby
+      </button>
+    </h2>
     <div class="big" id="counter">0/10</div>
     <div class="puzzle-grid" id="puzzle-grid"></div>
   </section>
 
-  <section id="timer-section">
+  <section id="players-section" style="display:none">
+    <h2>Igrači</h2>
+    <div id="players-list"></div>
+  </section>
+
+  <section id="timer-section" style="display:none">
     <h2>Preostalo vrijeme</h2>
     <div class="timer" id="timer">--:--</div>
   </section>
@@ -160,6 +183,9 @@
       { id: 'romanMarker',    label: 'Zag. 8 — Julius Caesar' },
     ];
 
+    const params = new URLSearchParams(window.location.search);
+    let currentLobby = params.get('lobby') ? params.get('lobby').toLowerCase() : null;
+
     function formatTime(seconds) {
       if (seconds <= 0) return '00:00';
       const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -167,38 +193,83 @@
       return `${m}:${s}`;
     }
 
-    async function refresh() {
+    function selectLobby(name) {
+      if (!name) return;
+      currentLobby = name;
+      document.getElementById('lobby-select-section').style.display = 'none';
+      document.getElementById('lobby-label').textContent = name;
+      startRefresh();
+    }
+
+    async function loadLobbyList() {
       try {
-        const res = await fetch('/progress');
+        const res = await fetch('/lobbies');
+        const list = await res.json();
+        const container = document.getElementById('lobby-list');
+        container.innerHTML = '';
+        if (list.length === 0) {
+          container.textContent = 'Nema aktivnih lobbyja.';
+          return;
+        }
+        list.forEach(l => {
+          const btn = document.createElement('button');
+          btn.textContent = `${l.lobby_name} (voditelj: ${l.host}, igrača: ${l.player_count})`;
+          btn.style.cssText = 'width:100%;padding:10px;margin-top:8px;background:transparent;border:1px dashed purple;color:turquoise;font-family:inherit;font-size:14px;cursor:pointer;text-align:left;';
+          btn.onclick = () => selectLobby(l.lobby_name);
+          container.appendChild(btn);
+        });
+      } catch (e) {
+        document.getElementById('lobby-list').textContent = 'Greška pri dohvatu lobbyja.';
+      }
+    }
+
+    async function refresh() {
+      if (!currentLobby) return;
+      try {
+        const res = await fetch('/lobby/' + currentLobby + '/progress');
+        if (!res.ok) {
+          document.getElementById('status-bar').textContent = 'Lobby ne postoji — ' + new Date().toLocaleTimeString();
+          return;
+        }
         const data = await res.json();
 
-        const noSession = document.getElementById('no-session');
-        const mainSection = document.getElementById('main-section');
-        const timerSection = document.getElementById('timer-section');
-        const completedBanner = document.getElementById('completed-banner');
-
-        if (data.count === 0 && data.time_remaining === 0 && !data.game_completed) {
-          noSession.style.display = 'block';
-          mainSection.style.display = 'none';
-          timerSection.style.display = 'none';
-          document.getElementById('status-bar').textContent = 'Ažurirano: ' + new Date().toLocaleTimeString();
+        if (!data.is_started && data.count === 0) {
+          document.getElementById('no-session').style.display = 'block';
+          document.getElementById('main-section').style.display = 'none';
+          document.getElementById('timer-section').style.display = 'none';
+          document.getElementById('players-section').style.display = 'none';
+          document.getElementById('status-bar').textContent = 'Čeka početak igre — ' + new Date().toLocaleTimeString();
           return;
         }
 
-        noSession.style.display = 'none';
-        mainSection.style.display = 'block';
-        timerSection.style.display = 'block';
+        document.getElementById('no-session').style.display = 'none';
+        document.getElementById('main-section').style.display = 'block';
+        document.getElementById('timer-section').style.display = 'block';
+        document.getElementById('players-section').style.display = 'block';
 
         document.getElementById('counter').textContent = `${data.count}/${data.total}`;
 
+        // Zagonetke s imenima igrača
         const grid = document.getElementById('puzzle-grid');
         grid.innerHTML = '';
         PUZZLES.forEach(p => {
-          const solved = data.solved.includes(p.id);
+          const solver = data.solved_by[p.id];
+          const solved = !!solver;
           const div = document.createElement('div');
           div.className = 'puzzle-item ' + (solved ? 'solved' : 'unsolved');
-          div.innerHTML = `<div class="dot ${solved ? 'solved' : 'unsolved'}"></div>${p.label}`;
+          div.innerHTML = `<div class="dot ${solved ? 'solved' : 'unsolved'}"></div>${p.label}${solved ? ' <span style="color:#aaa;font-size:13px">— ' + solver + '</span>' : ''}`;
           grid.appendChild(div);
+        });
+
+        // Popis igrača
+        const playersList = document.getElementById('players-list');
+        playersList.innerHTML = '';
+        (data.players || []).forEach(p => {
+          const solved = Object.values(data.solved_by).filter(n => n === p).length;
+          const div = document.createElement('div');
+          div.className = 'puzzle-item' + (p === data.host ? ' solved' : '');
+          div.innerHTML = `<div class="dot ${p === data.host ? 'solved' : 'unsolved'}"></div>${p}${p === data.host ? ' (voditelj)' : ''} — riješio/la: <strong>${solved}</strong>`;
+          playersList.appendChild(div);
         });
 
         const timerEl = document.getElementById('timer');
@@ -206,16 +277,52 @@
         timerEl.textContent = formatTime(t);
         timerEl.className = 'timer' + (t < 120 ? ' danger' : t < 300 ? ' warning' : '');
 
-        completedBanner.style.display = data.game_completed ? 'block' : 'none';
-
+        document.getElementById('completed-banner').style.display = data.game_completed ? 'block' : 'none';
         document.getElementById('status-bar').textContent = 'Ažurirano: ' + new Date().toLocaleTimeString();
       } catch (e) {
         document.getElementById('status-bar').textContent = 'Greška pri dohvatu podataka — ' + new Date().toLocaleTimeString();
       }
     }
 
-    refresh();
-    setInterval(refresh, 3000);
+    function deleteLobby() {
+      if (!currentLobby) return;
+      if (!confirm('Jesi li siguran da želiš obrisati lobby "' + currentLobby + '"?')) return;
+      fetch('/delete_lobby/' + currentLobby, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(() => {
+          stopRefresh();
+          currentLobby = null;
+          document.getElementById('main-section').style.display = 'none';
+          document.getElementById('timer-section').style.display = 'none';
+          document.getElementById('players-section').style.display = 'none';
+          document.getElementById('completed-banner').style.display = 'none';
+          document.getElementById('no-session').style.display = 'none';
+          document.getElementById('lobby-select-section').style.display = 'block';
+          document.getElementById('status-bar').textContent = 'Lobby obrisan.';
+          loadLobbyList();
+        })
+        .catch(() => alert('Greška pri brisanju lobbyja'));
+    }
+
+    let refreshInterval = null;
+
+    function stopRefresh() {
+      if (refreshInterval) { clearInterval(refreshInterval); refreshInterval = null; }
+    }
+
+    function startRefresh() {
+      stopRefresh();
+      refresh();
+      refreshInterval = setInterval(refresh, 3000);
+    }
+
+    if (currentLobby) {
+      document.getElementById('lobby-label').textContent = currentLobby;
+      startRefresh();
+    } else {
+      document.getElementById('lobby-select-section').style.display = 'block';
+      loadLobbyList();
+    }
   </script>
 </body>
 </html>

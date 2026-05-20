@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Escape — Lobby</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: black;
+      color: turquoise;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      border: 2px solid purple;
+      padding: 40px;
+      max-width: 520px;
+      width: 90%;
+    }
+    h1 { text-align: center; font-size: 26px; margin-bottom: 6px; }
+    h2 { text-align: center; color: purple; font-size: 16px; margin-bottom: 24px; letter-spacing: 2px; }
+    label { font-size: 14px; color: gray; display: block; margin-bottom: 6px; }
+    input {
+      width: 100%;
+      padding: 10px;
+      background: #111;
+      border: 1px solid turquoise;
+      color: turquoise;
+      font-family: inherit;
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 2px solid turquoise;
+      color: turquoise;
+      font-family: inherit;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    button:hover { background: turquoise; color: black; }
+    button.start-btn {
+      border-color: #00ff00;
+      color: #00ff00;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    button.start-btn:hover { background: #00ff00; color: black; }
+    #player-list { margin-top: 20px; }
+    .player-item {
+      padding: 10px 14px;
+      border: 1px dashed #333;
+      margin-top: 8px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .player-item.host { border-color: #00ff00; color: #00ff00; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: turquoise; flex-shrink: 0; }
+    .dot.host { background: #00ff00; }
+    #share-box {
+      margin-top: 20px;
+      border: 1px dashed purple;
+      padding: 12px;
+      font-size: 13px;
+    }
+    #share-box span { color: gray; display: block; margin-bottom: 4px; }
+    #share-link { color: turquoise; word-break: break-all; }
+    #status-bar { text-align: center; color: gray; font-size: 12px; margin-top: 18px; }
+    #error-msg { color: red; font-size: 14px; margin-top: 10px; text-align: center; }
+    #join-section, #waiting-section { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>NEON ESCAPE</h1>
+    <h2 id="lobby-title">LOBBY</h2>
+
+    <div id="join-section">
+      <label for="join-name">Unesite ime za pridruživanje:</label>
+      <input type="text" id="join-name" placeholder="Vaše ime">
+      <button id="join-btn">Pridruži se</button>
+      <div id="error-msg"></div>
+    </div>
+
+    <div id="waiting-section">
+      <div id="player-list"></div>
+      <div id="share-box">
+        <span>Pošaljite ovaj link ostalim igračima:</span>
+        <div id="share-link"></div>
+      </div>
+      <button class="start-btn" id="start-btn" style="display:none">▶ POKRENI IGRU</button>
+      <div id="status-bar">Čekanje...</div>
+    </div>
+  </div>
+
+  <script>
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const lobbyName = pathParts[pathParts.length - 1];
+
+    document.getElementById('lobby-title').textContent = 'LOBBY: ' + lobbyName.toUpperCase();
+    document.getElementById('share-link').textContent = window.location.href;
+
+    const storedName = sessionStorage.getItem('playerName');
+    const storedLobby = sessionStorage.getItem('lobbyName');
+    const isHost = sessionStorage.getItem('isHost') === 'true';
+
+    if (storedName && storedLobby === lobbyName) {
+      showWaitingRoom();
+    } else {
+      document.getElementById('join-section').style.display = 'block';
+    }
+
+    document.getElementById('join-btn').addEventListener('click', function () {
+      const name = document.getElementById('join-name').value.trim();
+      if (!name) { showError('Unesite ime'); return; }
+
+      fetch('/join_lobby/' + lobbyName, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ player_name: name })
+      })
+      .then(r => ({ status: r.status, json: r.json() }))
+      .then(({ status, json }) => json.then(data => {
+        if (status === 403 && data.message === 'Game already started') {
+          sessionStorage.setItem('playerName', name);
+          sessionStorage.setItem('lobbyName', lobbyName);
+          sessionStorage.setItem('isHost', 'false');
+          window.location.href = '/startPage.html/' + lobbyName;
+        } else if (data.role) {
+          sessionStorage.setItem('playerName', name);
+          sessionStorage.setItem('lobbyName', lobbyName);
+          sessionStorage.setItem('isHost', 'false');
+          showWaitingRoom();
+        } else {
+          showError(data.message || 'Greška pri spajanju');
+        }
+      }))
+      .catch(() => showError('Greška veze'));
+    });
+
+    document.getElementById('start-btn').addEventListener('click', function () {
+      fetch('/start_game/' + lobbyName, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(r => r.json())
+      .then(() => {
+        window.location.href = '/startPage.html/' + lobbyName;
+      })
+      .catch(() => showError('Greška pri pokretanju'));
+    });
+
+    function showWaitingRoom() {
+      document.getElementById('join-section').style.display = 'none';
+      document.getElementById('waiting-section').style.display = 'block';
+      if (isHost) {
+        document.getElementById('start-btn').style.display = 'block';
+      }
+      startPolling();
+    }
+
+    function showError(msg) {
+      document.getElementById('error-msg').textContent = msg;
+    }
+
+    function renderPlayers(players, host) {
+      const list = document.getElementById('player-list');
+      list.innerHTML = '';
+      players.forEach(p => {
+        const isH = p === host;
+        const div = document.createElement('div');
+        div.className = 'player-item' + (isH ? ' host' : '');
+        div.innerHTML = `<div class="dot${isH ? ' host' : ''}"></div>${p}${isH ? ' (voditelj)' : ''}`;
+        list.appendChild(div);
+      });
+    }
+
+    function startPolling() {
+      async function poll() {
+        try {
+          const res = await fetch('/lobby/' + lobbyName + '/status');
+          if (!res.ok) { updateStatus('Lobby nije pronađen'); return; }
+          const data = await res.json();
+          renderPlayers(data.players, data.host);
+          updateStatus('Igrači: ' + data.player_count + ' | ' + new Date().toLocaleTimeString());
+          if (data.is_started) {
+            window.location.href = '/startPage.html/' + lobbyName;
+          }
+        } catch (e) {
+          updateStatus('Greška veze — ' + new Date().toLocaleTimeString());
+        }
+      }
+      poll();
+      setInterval(poll, 2000);
+    }
+
+    function updateStatus(msg) {
+      document.getElementById('status-bar').textContent = msg;
+    }
+  </script>
+</body>
+</html>
