@@ -1,5 +1,6 @@
 function reportPuzzle(puzzleId) {
-  const gameEndSound=new Audio("audio/game_end.mp3")
+  const gameEndSound=new Audio("audio/game_end.mp3");
+  const markerScanSound=new Audio("audio/marker_scan.mp3");
     fetch('/solve_puzzle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -45,6 +46,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 1A */
   walkmanMarker.addEventListener('markerFound', function () {
     if (markerStatus["walkmanMarker"]) return;
+    markerScanSound.currentTime=0;
+    markerScanSound.play();
     markerStatus["walkmanMarker"] = true;
     puzzleFound();
     reportPuzzle('walkmanMarker');
@@ -67,7 +70,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 1B */
   awakenedPC.addEventListener('markerFound', function () {
     if (markerStatus["awakenedPC"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 1B',
@@ -82,7 +86,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 2A */
   pagerMarker.addEventListener('markerFound', function () {
     if (markerStatus["pagerMarker"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 2A',
@@ -99,7 +104,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 2B */
   antennaMarker.addEventListener('markerFound', function () {
     if (markerStatus["antennaMarker"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 2B',
@@ -116,7 +122,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 3 */
   numbersMarker.addEventListener('markerFound', function () {
     if (markerStatus["numbersMarker"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 3',
@@ -133,7 +140,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 4 */
   neonApollo.addEventListener('markerFound', function () {
     if (markerStatus["neonApollo"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 4',
@@ -150,7 +158,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 5 */
   wallClock.addEventListener('markerFound', function () {
     if (markerStatus["wallClock"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 5',
@@ -196,7 +205,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   rebusMarker.addEventListener('markerFound', function () {
     if (markerStatus["rebusMarker"]) return;
     const validAnswers = ["in between jobs", "izmedu posla", "izmedu dva posla", "posao u poslu", "poso u poslu"];
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 7',
@@ -247,7 +257,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* Zadatak 8 */
   romanMarker.addEventListener('markerFound', function () {
     if (markerStatus["romanMarker"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     Swal.fire({
       position: 'top-start',
       title: 'Zadatak 8',
@@ -337,7 +348,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /* FINALNA ZAGONETKA */
   FinalMarker.addEventListener('markerFound', function () {
     if (markerStatus["FinalMarker"]) return;
-
+ markerScanSound.currentTime=0;
+    markerScanSound.play();
     const solved = window._puzzleCount ?? 0;
     const total  = window._puzzleTotal ?? 10;
 
