@@ -29,14 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 }
             })
-            .catch(() => {});
+            .catch(() => { });
     }
 
     window.refreshPuzzleCount = fetchAndUpdate;
 
     // no-op — lokalni inkrement više ne postoji
-    window.puzzleFound = function () {};
-    window.syncPuzzleCount = function () {};
+    window.puzzleFound = function () { };
+    window.syncPuzzleCount = function () { };
 
     fetchAndUpdate();
     setInterval(fetchAndUpdate, 3000);
