@@ -202,6 +202,7 @@
   <script>
     let totalModels = 0;
     let loadedModels = 0;
+    let started = false;
 
     function updateProgress() {
       if (totalModels === 0) return;
@@ -218,41 +219,53 @@
       }
     }
 
-    // ČEKAJ AFRAME SCENE DA POSTOJI
-    document.addEventListener("DOMContentLoaded", () => {
+    function initLoader() {
+      if (started) return;
+      started = true;
 
-      const scene = document.querySelector("a-scene");
+      const models = document.querySelectorAll("[gltf-model]");
+      totalModels = models.length;
 
-      scene.addEventListener("loaded", () => {
+      console.log("Loader init, models:", totalModels);
 
-        const models = document.querySelectorAll("[gltf-model]");
-        totalModels = models.length;
+      models.forEach(el => {
 
-        console.log("Total models:", totalModels);
+        const markLoaded = () => {
+          loadedModels++;
+          updateProgress();
+        };
 
-        models.forEach(el => {
+        // fallback: ako je već učitano
+        if (el.getObject3D && el.getObject3D("mesh")) {
+          markLoaded();
+          return;
+        }
 
-          // ako je već učitan → odmah count
-          if (el.getObject3D && el.getObject3D("mesh")) {
-            loadedModels++;
-            return;
+        el.addEventListener("model-loaded", markLoaded);
+        el.addEventListener("model-error", markLoaded);
+
+        // MOBILE SAFETY: timeout fallback (VAŽNO)
+        setTimeout(() => {
+          if (!el.getObject3D("mesh")) {
+            markLoaded();
           }
+        }, 5000);
 
-          el.addEventListener("model-loaded", () => {
-            loadedModels++;
-            updateProgress();
-          });
-
-          el.addEventListener("model-error", () => {
-            loadedModels++;
-            updateProgress();
-          });
-
-        });
-
-        updateProgress();
       });
 
+      updateProgress();
+    }
+
+    // 1. desktop + mobile safe start
+    document.addEventListener("DOMContentLoaded", () => {
+      const scene = document.querySelector("a-scene");
+
+      if (!scene) return;
+
+      scene.addEventListener("loaded", initLoader);
+
+      // 2. extra safety (AR.js ponekad ne triggera loaded)
+      setTimeout(initLoader, 2000);
     });
   </script>
 </body>
