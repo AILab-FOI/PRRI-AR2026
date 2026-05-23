@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Neon Escape — Progress</title>
@@ -82,8 +83,13 @@
       flex-shrink: 0;
     }
 
-    .dot.solved { background-color: turquoise; }
-    .dot.unsolved { background-color: #333; }
+    .dot.solved {
+      background-color: turquoise;
+    }
+
+    .dot.unsolved {
+      background-color: #333;
+    }
 
     .completed-banner {
       text-align: center;
@@ -105,8 +111,13 @@
       margin: 10px 0;
     }
 
-    .timer.warning { color: orange; }
-    .timer.danger { color: red; }
+    .timer.warning {
+      color: orange;
+    }
+
+    .timer.danger {
+      color: red;
+    }
 
     .status-bar {
       text-align: center;
@@ -124,6 +135,7 @@
     }
   </style>
 </head>
+
 <body>
   <h1>NEON ESCAPE — ADMIN PROGRESS</h1>
 
@@ -171,16 +183,16 @@
 
   <script>
     const PUZZLES = [
-      { id: 'walkmanMarker',  label: 'Zag. 1A — Walkman' },
-      { id: 'awakenedPC',     label: 'Zag. 1B — PC' },
-      { id: 'pagerMarker',    label: 'Zag. 2A — Pager' },
-      { id: 'antennaMarker',  label: 'Zag. 2B — Antena' },
-      { id: 'numbersMarker',  label: 'Zag. 3 — Brojevi' },
-      { id: 'neonApollo',     label: 'Zag. 4 — Neon Apollo' },
-      { id: 'wallClock',      label: 'Zag. 5 — Sat' },
-      { id: 'memoryMarker',   label: 'Zag. 6 — Memory' },
-      { id: 'rebusMarker',    label: 'Zag. 7 — Rebus' },
-      { id: 'romanMarker',    label: 'Zag. 8 — Julius Caesar' },
+      { id: 'walkmanMarker', label: 'Zag. 1A — Walkman' },
+      { id: 'awakenedPC', label: 'Zag. 1B — PC' },
+      { id: 'pagerMarker', label: 'Zag. 2A — Pager' },
+      { id: 'antennaMarker', label: 'Zag. 2B — Antena' },
+      { id: 'numbersMarker', label: 'Zag. 3 — Brojevi' },
+      { id: 'neonApollo', label: 'Zag. 4 — Neon Apollo' },
+      { id: 'wallClock', label: 'Zag. 5 — Sat' },
+      { id: 'memoryMarker', label: 'Zag. 6 — Memory' },
+      { id: 'rebusMarker', label: 'Zag. 7 — Rebus' },
+      { id: 'romanMarker', label: 'Zag. 8 — Julius Caesar' },
     ];
 
     const params = new URLSearchParams(window.location.search);
@@ -325,4 +337,5 @@
     }
   </script>
 </body>
+
 </html>

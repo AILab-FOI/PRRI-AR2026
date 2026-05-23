@@ -69,10 +69,35 @@
       font-size: 28px;
       font-weight: bold;
     }
+
+    /* CSS za loading bar */
+    #loadingScreen {
+      position: fixed;
+      inset: 0;
+      background: black;
+      color: #00ffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      font-family: monospace;
+    }
+
+    progress {
+      width: 300px;
+      height: 20px;
+      accent-color: #00ffff;
+    }
   </style>
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
+  <div id="loadingScreen">
+    <h2>Booting Neon Escape...</h2>
+    <progress id="loadingBar" value="0" max="100"></progress>
+    <div id="percentText">0%</div>
+  </div>
   <audio id="walkmanAudio" src="/audio/zagonetka_1.mp3" preload="auto"></audio>
   <a-scene vr-mode-ui="enabled: false;" renderer="logarithmicDepthBuffer: true;" embedded
     arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;">
@@ -126,8 +151,8 @@
     </a-marker>
 
     <!-- Zagonetka 5 -->
-    <a-marker type="pattern" url="Patterns/Ispravljeni_marker_5.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
-      smoothThreshold="10" id="wallClock">
+    <a-marker type="pattern" url="Patterns/Ispravljeni_marker_5.patt" smooth="true" smoothCount="20"
+      smoothTolerance="0.01" smoothThreshold="10" id="wallClock">
       <a-entity gltf-model="Models/clock_zg5.glb" scale="50 50 50" position="0 0 0" rotation="-90 -90 90"
         material="transparent: true; opacity: 0.6;">
       </a-entity>
@@ -164,8 +189,8 @@
     </div>
 
     <!-- Zagonetka FINALNA -->
-    <a-marker type="pattern" url="Patterns/Portal_pattern.patt" smooth="true" smoothCount="20"
-      smoothTolerance="0.01" smoothThreshold="10" id="FinalMarker">
+    <a-marker type="pattern" url="Patterns/Portal_pattern.patt" smooth="true" smoothCount="20" smoothTolerance="0.01"
+      smoothThreshold="10" id="FinalMarker">
       <a-entity gltf-model="Models/Portal.glb" scale="1.2 1.2 1.2" position="0 0 0" rotation="-90 0 0"
         material="transparent: true; opacity: 0.6;">
       </a-entity>
@@ -173,6 +198,76 @@
 
     <a-entity camera></a-entity>
   </a-scene>
+
+  <script>
+    let totalModels = 0;
+    let loadedModels = 0;
+    let started = false;
+
+    function updateProgress() {
+      if (totalModels === 0) return;
+
+      const percent = Math.round((loadedModels / totalModels) * 100);
+
+      document.getElementById("loadingBar").value = percent;
+      document.getElementById("percentText").innerText = percent + "%";
+
+      if (loadedModels >= totalModels) {
+        setTimeout(() => {
+          document.getElementById("loadingScreen").style.display = "none";
+        }, 500);
+      }
+    }
+
+    function initLoader() {
+      if (started) return;
+      started = true;
+
+      const models = document.querySelectorAll("[gltf-model]");
+      totalModels = models.length;
+
+      console.log("Loader init, models:", totalModels);
+
+      models.forEach(el => {
+
+        const markLoaded = () => {
+          loadedModels++;
+          updateProgress();
+        };
+
+        // fallback: ako je već učitano
+        if (el.getObject3D && el.getObject3D("mesh")) {
+          markLoaded();
+          return;
+        }
+
+        el.addEventListener("model-loaded", markLoaded);
+        el.addEventListener("model-error", markLoaded);
+
+        // MOBILE SAFETY: timeout fallback (VAŽNO)
+        setTimeout(() => {
+          if (!el.getObject3D("mesh")) {
+            markLoaded();
+          }
+        }, 5000);
+
+      });
+
+      updateProgress();
+    }
+
+    // 1. desktop + mobile safe start
+    document.addEventListener("DOMContentLoaded", () => {
+      const scene = document.querySelector("a-scene");
+
+      if (!scene) return;
+
+      scene.addEventListener("loaded", initLoader);
+
+      // 2. extra safety (AR.js ponekad ne triggera loaded)
+      setTimeout(initLoader, 2000);
+    });
+  </script>
 </body>
 
 </html>
