@@ -133,10 +133,81 @@
       margin-top: 40px;
       display: none;
     }
+
+    /* CSS za autentifikaciju */
+    #loginScreen {
+      position: fixed;
+      inset: 0;
+      background: black;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      font-family: Arial, sans-serif;
+    }
+
+    #loginBox {
+      text-align: center;
+      background: rgba(20, 20, 20, 0.9);
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+
+    #loginBox h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #00ffff;
+    }
+
+    #loginBox input {
+      display: block;
+      width: 200px;
+      margin: 10px auto;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    #loginBox button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #00ffff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #loginBox button:hover {
+      background: #00dddd;
+    }
+
+    #error {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+    }
   </style>
 </head>
 
 <body>
+  <!-- Login na progress.html -->
+  <div id="loginScreen">
+    <div id="loginBox">
+      <h2>Admin Login</h2>
+
+      <input id="user" placeholder="username" />
+      <input id="pass" type="password" placeholder="password" />
+
+      <button onclick="login()">Login</button>
+
+      <p id="error"></p>
+    </div>
+  </div>
+
   <h1>NEON ESCAPE — ADMIN PROGRESS</h1>
 
   <div class="completed-banner" id="completed-banner">
@@ -335,6 +406,26 @@
       document.getElementById('lobby-select-section').style.display = 'block';
       loadLobbyList();
     }
+
+    /* Implementacija autentifikacije na progress.html */
+    function login() {
+      const user = document.getElementById("user").value;
+      const pass = document.getElementById("pass").value;
+
+      if (user === "admin" && pass === "admin") {
+        sessionStorage.setItem("auth", "true");
+        document.getElementById("loginScreen").style.display = "none";
+      } else {
+        document.getElementById("error").innerText = "Wrong credentials";
+      }
+    }
+
+    // auto-check on load
+    window.addEventListener("load", () => {
+      if (sessionStorage.getItem("auth") === "true") {
+        document.getElementById("loginScreen").style.display = "none";
+      }
+    });
   </script>
 </body>
 
