@@ -2,7 +2,7 @@ const TOTAL_PUZZLES = 10;
 
 document.addEventListener("DOMContentLoaded", () => {
     const counterElement = document.getElementById("puzzle-counter");
-
+    let gameOverShown = false;
     function fetchAndUpdate() {
         const url = window.LOBBY_NAME ? `/lobby/${window.LOBBY_NAME}/progress` : '/progress';
         fetch(url)
@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (data.game_completed && !window._gameEnded) {
                     window._gameEnded = true;
+                    gameOverShown = true;
                     Swal.fire({
                         title: '🏆 Igra završena!',
                         text: 'Vaš tim je riješio sve zagonetke!',
@@ -27,6 +28,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     }).then(() => {
                         window.location.href = '/';
                     });
+                }
+                const timeLeft = data.time_remaining ?? 1;
+                if (data.time_up && !gameOverShown && !data.game_completed) {
+                    gameOverShown = true;
+
+                    let countdown = 10;
+                    Swal.fire({
+                        title: '⛔ GAME OVER',
+                        html: `
+                            <p>Vrijeme je isteklo. Niste uspjeli pobjeći iz Neon Escapea.</p>
+                            <p style="margin-top: 16px; font-size: 14px; color: #888;">
+                                Povratak na početak za
+                                <strong id="gameover-countdown">${countdown}</strong> sekundi...
+                            </p>
+                        `,
+                        icon: 'error',
+                        confirmButtonText: 'Idi na početak',
+                        confirmButtonColor: '#c0392b',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            const el = document.getElementById('gameover-countdown');
+                            const interval = setInterval(async () => {
+                                countdown--;
+                                if (el) el.textContent = countdown;
+                                if (countdown <= 0) {
+                                    clearInterval(interval);
+                                    if (window.LOBBY_NAME) {
+                                        try {
+                                            await fetch('/delete_lobby/' + window.LOBBY_NAME, { method: 'DELETE' });
+                                        } catch (e) {}
+                                    }
+                                    Swal.close();
+                                    window.location.href = '/';
+                                }
+                            }, 1000);
+                        }
+                    }); 
                 }
             })
             .catch(() => { });

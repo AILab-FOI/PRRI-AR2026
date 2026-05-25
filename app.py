@@ -344,6 +344,7 @@ def lobby_progress(lobby_name):
             'count': len(solved_by),
             'total': TOTAL_PUZZLES,
             'time_remaining': round(session.get_remaining_time()),
+            'time_up': session.is_time_up(),
             'game_completed': session.game_completed,
             'players': list(session.players),
             'host': session.host_name,
