@@ -18,7 +18,7 @@ min-height: 100vh;
 }
 
 .container {
-background: rgba(0, 0, 0, 0.75);
+background: rgba(0, 0, 0, 0.85);
 border: 2px solid purple;
 border-radius: 16px;
 margin-bottom: 180px;
