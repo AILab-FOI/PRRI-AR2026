@@ -5,19 +5,25 @@ padding: 0;
 }
 
 body {
-background: black;
+background-image: url("../images/Lobby_background.png");
+background-size: cover;
+background-position: center;
 color: turquoise;
 font-family: 'Courier New', Courier, monospace;
 display: flex;
 justify-content: center;
 align-items: center;
 min-height: 100vh;
+
 }
 
 .container {
+background: rgba(0, 0, 0, 0.75);
 border: 2px solid purple;
-padding: 40px;
-max-width: 550px;
+border-radius: 16px;
+margin-bottom: 180px;
+padding: 10px;
+max-width: 450px;
 width: 90%;
 }
 
@@ -128,7 +134,7 @@ margin-top: 6px;
 }
 
 #share-box span {
-color: gray;
+color: white;
 display: block;
 margin-bottom: 4px;
 }
@@ -140,7 +146,7 @@ word-break: break-all;
 
 #status-bar {
 text-align: center;
-color: gray;
+color: white;
 font-size: 12px;
 margin-top: 18px;
 }
