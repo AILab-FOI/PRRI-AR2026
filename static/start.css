@@ -1,9 +1,9 @@
   body {
-    font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
-    background-color: black; /* Terminal background color */
-    color: turquoise; /* Terminal text color */
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
+    font-family: 'Courier New', Courier, monospace; 
+    background-color: black; 
+    color: turquoise; 
+    margin: 0; 
+    padding: 0; 
     background-image: url("../images/Background_1.png");
     background-size: cover;
     
@@ -24,6 +24,7 @@
     margin-bottom: 10px;
     color: white;
     font-size: 20px;
+    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
   }
 
   input {
@@ -45,38 +46,45 @@ table{
 }
   h1 {
     text-align: center;
-    font-size: 24px; /* Font size in pixels */
+    font-size: 24px; 
     font-weight: bold;
     text-decoration: underline;
     padding: 10px;
-    color: turquoise; /* Header text color */
-    margin-bottom: 20px; /* Add margin below header */
+    color: turquoise;
+    margin-bottom: 20px;
   }
 h2{
     text-align: center;
 }
   p {
-    font-size: 18px; /* Font size in pixels */
-    line-height: 1.5; /* Line height for better readability */
+    font-size: 18px; 
+    line-height: 1.5; 
   }
   button {
-    background-color: black; /* Black background */
-    border: 2px solid purple; /* Green border */
-    color: turquoise; /* Dark green text color */
-    padding: 20px 40px; /* Adjust padding to increase button size */
+    background-color: black; 
+    border: 2px solid purple; 
+    color: turquoise; 
+    padding: 20px 40px; 
     text-align: center;
     text-decoration: none;
-    display: block; /* Center the button */
-    font-size: 24px; /* Adjust font size */
-    margin: 20px auto 0 auto; /* Center the button */
+    display: block;
+    font-size: 24px; 
+    margin: 20px auto 0 auto; 
     cursor: pointer;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1); /* Add shadow */
+    border-radius: 10px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1); 
     transition: all 0.3s ease 0s;
 
 }
 
 button:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #45a049;
 }
 
+#error-msg {
+  display: none;
+  background-color: turquoise;
+  color: red;
+  padding: 2px 6px;
+  width: fit-content;
+}
