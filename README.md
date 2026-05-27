@@ -6,10 +6,20 @@ An augmented reality escape game developed by students and the [Artificial Intel
 
 To generate patterns you can use [this online tool](https://jeromeetienne.github.io/AR.js/three.js/examples/marker-training/examples/generator.html). To generate markers you can use [this online tool](https://carnaux.github.io/NFT-Marker-Creator/). To generate your own SSH keys, use the `generate-keys.sh` script.
 
-## Starting the server
+## Starting the database and server
 
-nohup runzeo -a 0.0.0.0:5334 -f None & 
-nohup python3 server.py &
+runzeo -a 0.0.0.0:5334 -f /tmp/data.fs &
+python3 server.py
+
+## Delete the database (if needed) 
+
+pkill runzeo
+rm /tmp/data.fs /tmp/data.fs.index /tmp/data.fs.lock /tmp/data.fs.tmp 2>/dev/null
+
+## Game progress
+
+To track game progress, go to: https://[ip_adress]:5333/progress.html
+Login data - Username: admin    Password: admin
 
 ## GDD
 
